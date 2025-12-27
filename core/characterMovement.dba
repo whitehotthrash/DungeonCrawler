@@ -1,0 +1,107 @@
+Rem: Player Character Movement Logic
+
+GLOBAL movePlayerCharacterX#, movePlayerCharacterY#, movePlayerCharacterz#, isPlayerCharacterMoving, playerCharacterMoveSpeed#
+GLOBAL idleStartFrame#, idleEndFrame#, walkStartFrame#, walkEndFrame#, isWalkAnimationPlaying, walkingfx#
+
+FUNCTION Init_Player_Movement()
+	movePlayerCharacterX#     = OBJECT POSITION X(1)
+	movePlayerCharacterY#     = OBJECT POSITION Y(1)
+	movePlayerCharacterZ#     = OBJECT POSITION Z(1)
+	isPlayerCharacterMoving   = 0
+	playerCharacterMoveSpeed# = 0.025
+	idleStartFrame#           = 0
+	idleEndFrame#             = 24
+	walkStartFrame#           = idleEndFrame# + 1
+	walkEndFrame#             = TOTAL OBJECT FRAMES(1) - 1
+	isWalkAnimationPlaying    = 0
+	SET OBJECT SPEED 1, 10
+ENDFUNCTION
+
+FUNCTION Click_To_Move()
+	Rem detect left click 1
+	IF MOUSECLICK() = 1
+		
+		Rem get nearest ray vector
+		PICK SCREEN MOUSEX(), MOUSEY(), 1
+		nearVectX# = GET PICK VECTOR X()
+		nearVectY# = GET PICK VECTOR Y()
+		nearVectZ# = GET PICK VECTOR Z()
+		
+		Rem get farthest ray vector
+		PICK SCREEN MOUSEX(), MOUSEY(), 1000
+		farVectX# = GET PICK VECTOR X()
+		farVectY# = GET PICK VECTOR Y()
+		farVectZ# = GET PICK VECTOR Z()
+		
+		camX# = CAMERA POSITION X(0)
+		camY# = CAMERA POSITION Y(0)
+		camZ# = CAMERA POSITION Z(0)
+		
+		nearX# = camX# + nearVectX#
+		nearY# = camY# + nearVectY#
+		nearZ# = camZ# + nearVectZ#
+		
+		farX# = camX# + farVectX#
+		farY# = camY# + farVectY#
+		farZ# = camZ# + farVectZ#
+		
+		Rem intersect ray with ground plane at y = 0
+		deltaY# = farY# - nearY#
+		IF deltaY# <> 0
+			t# = (0 - nearY#) / deltaY#
+			IF t# >= 0
+				movePlayerCharacterX#   = nearX# + (farX# - nearX#) * t#
+				movePlayerCharacterZ#   = nearZ# + (farZ# - nearZ#) * t#
+				isPlayerCharacterMoving = 1
+			ENDIF
+		ENDIF
+		
+		Rem make model turn to face intersected ray
+		POINT OBJECT 1, movePlayerCharacterX#, movePlayerCharacterY#, movePlayerCharacterZ#
+		
+		Rem play walk animation
+		IF isWalkAnimationPlaying = 0
+			LOOP OBJECT 1, 29, walkEndFrame#
+			SET OBJECT SPEED 1, 31.5
+			isWalkAnimationPlaying = 1
+			LOOP SOUND 1
+		ENDIF
+		
+	ENDIF
+ENDFUNCTION
+
+FUNCTION Update_Player_Movement()
+	IF isPlayerCharacterMoving = 1
+		currentCharX# = OBJECT POSITION X(1)
+		currentCharZ# = OBJECT POSITION Z(1)
+		
+		deltaX# = movePlayerCharacterX# - currentCharX#
+		deltaZ# = movePlayerCharacterZ# - currentCharZ#
+		
+		distanceToTarget# = SQRT((deltaX# * deltaX#) + (deltaZ# * deltaZ#))
+		
+		IF distanceToTarget# > 1.0
+		
+			Rem normalize direction
+			normalizedX# = deltaX# / distanceToTarget#
+			normalizedZ# = deltaZ# / distanceToTarget#
+		
+			Rem move towards target
+			newCharX# = currentCharX# + normalizedX# * playerCharacterMoveSpeed#
+			newCharZ# = currentCharZ# + normalizedZ# * playerCharacterMoveSpeed#
+			
+			POSITION OBJECT 1, newCharX#, OBJECT POSITION Y(1), newCharZ#
+			
+		ELSE
+			isPlayerCharacterMoving = 0
+			
+			IF isWalkAnimationPlaying = 1				
+				LOOP OBJECT 1, idleStartFrame#, idleEndFrame#
+				SET OBJECT SPEED 1, 10
+				isWalkAnimationPlaying = 0
+				STOP SOUND 1
+			ENDIF
+		ENDIF
+
+	ENDIF
+ENDFUNCTION

@@ -1,0 +1,6 @@
+Rem: Player Character Template
+
+
+//MAKE OBJECT PLAIN 2, 10, 10
+//XROTATE OBJECT 2, 90
+//TEXTURE OBJECT 2, 2

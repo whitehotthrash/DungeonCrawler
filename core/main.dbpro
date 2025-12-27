@@ -1,0 +1,88 @@
+; **** Dark BASIC Professional Project File ****
+; **** Written by DarkBASIC Professional Editor ****
+version=DBP1.00
+project name=MyFirstGame
+
+; **** source file information ****
+main=main.dba
+include1=cameraControl.dba
+include2=characterMovement.dba
+include3=playerCharacterObject.dba
+include4=onHover.dba
+include5=trees.dba
+final source=_Temp.dbsource
+
+; **** Executable Information  ***
+; build types: exe, media, installer, alone
+executable=DSClone.exe
+build type=exe
+; ** Media file compression **
+compression=NO
+
+; ** Media file encryption **
+encryption=NO
+; ** Display the card options screen window? **
+card options window=NO
+
+; **** debugger information ****
+; If the editor sets this to yes, it is running in debug mode
+CLI=NO
+CommandLineArguments=
+
+; **** display mode information ****
+app title=DS Clone
+
+; graphics mode options: fullscreen, window, desktop, fulldesktop, hidden
+graphics mode=window
+fullscreen resolution=1280x1024x32
+
+; arbitrary sizes are valid for windowed mode
+window resolution=800x600
+
+; **** External Files Information ****
+
+; **** Media ****
+; Example entries: media1=graphics\*.jpg
+media root path=C:\Program Files\The Game Creators\Dark Basic Professional\Projects\MyFirstGame\src\core\
+
+; **** Icons ****
+
+; **** Cursors ****
+
+; **** Version Info ****
+VerComments=
+VerCompany=BeanForge Lab
+VerFileDesc=
+VerFileNumber=v1.0
+VerInternal=v1.0
+VerCopyright=© Tim Maastricht/ BeanForge Lab
+VerTrademark=
+VerFilename=
+VerProduct=
+VerProductNumber=v1.0
+
+; **** To Do ****
+ToDo1=1create/ texture background
+ToDo2=0adjust 'sun' position
+ToDo3=1on-hover for character
+ToDo4=0create enemy model
+ToDo5=0on-hover for enemy
+ToDo6=0create attack animation
+ToDo7=0create npc character
+ToDo8=0create on-hover for npc
+ToDo9=0create dialogue box for npc character
+ToDo10=0look at templates/ type
+ToDo11=0look into sub-programs
+ToDo12=0on-hover sword cursor for enemies
+ToDo13=1Fix X-axis orbiting camera
+ToDo14=1Scroll wheel zooming
+ToDo15=1Click to move character model
+ToDo16=1Restructure directory and files
+ToDo17=1fix rapid single axis movement
+ToDo18=1added footstep sound fx
+ToDo19=0add simple shadow for player character
+ToDo20=0load/unload matrix chunks
+ToDo21=1add trees
+ToDo22=1added world music
+
+; **** Comments ****

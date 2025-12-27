@@ -1,0 +1,97 @@
+Rem Project: DS Clone
+Rem Created: Monday, December 22, 2025
+Rem Developer: Tim, BeanForge Lab
+
+Rem ***** Main Source File *****
+
+Rem skysphere
+LOAD IMAGE "assets\valley dawn\valley dawn.jpg", 10
+MAKE OBJECT SPHERE 2, 400, 10, 10
+TEXTURE OBJECT 2, 10
+SET OBJECT CULL 2, 0
+
+Rem floor textures
+LOAD IMAGE "assets\grass_T.bmp", 1
+MAKE MATRIX 1, 100, 100, 50, 50
+POSITION MATRIX 1, -100, 0, -100
+PREPARE MATRIX TEXTURE 1, 1, 1, 1
+SET MATRIX HEIGHT 1, 10, 10, 0
+UPDATE MATRIX 1
+
+LOAD IMAGE "assets\Granite_chippings_T.bmp", 2
+MAKE MATRIX 2, 100, 100, 50, 50,
+POSITION MATRIX 2, 0, 0, -100
+PREPARE MATRIX TEXTURE 2, 2, 1, 1
+SET MATRIX HEIGHT 2, 10, 10, 100
+UPDATE MATRIX 2
+
+LOAD IMAGE "assets\sandstone_T.bmp", 3
+MAKE MATRIX 3, 100, 100, 50, 50,
+POSITION MATRIX 3, -100, 0, 0
+PREPARE MATRIX TEXTURE 3, 3, 1, 1
+SET MATRIX HEIGHT 3, 10, 10, 100
+UPDATE MATRIX 3
+
+LOAD IMAGE "assets\oldwood.bmp", 4
+MAKE MATRIX 4, 100, 100, 50, 50,
+POSITION MATRIX 4, 0, 0, 0
+PREPARE MATRIX TEXTURE 4, 4, 1, 1
+SET MATRIX HEIGHT 4, 10, 10, 100
+UPDATE MATRIX 4
+
+Rem player character
+LOAD OBJECT "assets\H-Babe-Idle.x", 1
+APPEND OBJECT "assets\H-Babe-Move.x", 1, 25
+LOOP OBJECT 1, 0, 24
+YROTATE OBJECT 1, 180
+FIX OBJECT PIVOT 1
+LOAD SOUND "assets\Girly_slow.wav", 1
+SCALE OBJECT 1, 120, 120, 120
+
+LOAD MUSIC "assets\darkness.mp3", 1
+LOOP MUSIC 1
+
+SET OBJECT FOG 2, 1
+FOG ON
+FOG DISTANCE 1, 75
+FOG COLOR 2
+ 
+//SET SHADOW SHADING ON 2
+//SET PIXEL SHADER ON 1, 10
+// LOAD IMAGE "assets\drop_shadow.bmp", 5
+// MAKE OBJECT PLAIN 3, 0.4, 0.4
+// SET OBJECT 3, 1, 1, 0.2, 1
+// TEXTURE OBJECT 3, 5
+// XROTATE OBJECT 3, 90
+// POSITION OBJECT 3, 0, 0.01, 0
+
+POSITION OBJECT 1, 0, 0, 0
+
+Init_Player_Movement()
+Camera_Init()
+Init_Trees()
+
+SYNC ON : SYNC RATE 60
+
+Rem Main Loop
+DO
+	Click_To_Move()
+	Update_Player_Movement()
+	Camera_Update()
+	On_Hover()
+			
+    Rem Logging
+// 	PRINT "object x:";OBJECT POSITION X(1)
+// 	PRINT "object y:";OBJECT POSITION Y(1)
+// 	PRINT "object z:";OBJECT POSITION Z(1)
+	
+// 	ox# = RND(OBJECT POSITION X(1))
+// 
+// 	objectX$ = "OX: " + STR$(ox#)
+// 	TEXT SCREEN WIDTH()-500-TEXT WIDTH(objectX$), SCREEN HEIGHT()-90, objectX$
+        
+    fps$="fps: " + STR$(SCREEN FPS())
+    TEXT SCREEN WIDTH()-20-TEXT WIDTH(fps$),SCREEN HEIGHT()-40, fps$
+    
+   SYNC
+LOOP

@@ -1,0 +1,36 @@
+Rem: Character Camera Control Functions
+
+Rem Camera Defaults    
+GLOBAL charCamAngle#, charCamRadius#, charCamheight#, preScrollWheel#, currentScrollWheel#
+
+FUNCTION Camera_Init()
+	charCamAngle# = 0.0
+	charCamRadius# = 10.0
+	charCamHeight# = 10.0
+	preScrollWheel# = MOUSEZ()
+ENDFUNCTION
+
+FUNCTION Camera_Update()
+	currentScrollWheel# = MOUSEZ()
+	IF currentScrollWheel# > preScrollWheel# THEN charCamRadius# = charCamRadius# - 1
+	IF currentScrollWheel# < preScrollWheel# THEN charCamRadius# = charCamRadius# + 1
+	
+	IF charCamRadius# < 1 THEN charCamRadius# = 1
+	IF charCamRadius# > 20 THEN charCamRadius# = 20
+	
+	IF LEFTKEY()  = 1 THEN charCamAngle# = charCamAngle# - 1
+	IF RIGHTKEY() = 1 THEN charCamAngle# = charCamAngle# + 1
+	
+	IF charCamAngle# >= 360 THEN charCamAngle# = charCamAngle# - 360
+	IF charCamAngle# <  0   THEN charCamAngle# = charCamAngle# + 360
+	
+	camX# = OBJECT POSITION X(1) + COS(charCamAngle#) * charCamRadius#
+	camZ# = OBJECT POSITION Z(1) + SIN(charCamAngle#) * charCamRadius#
+	camY# = OBJECT POSITION Y(1) + charCamHeight#
+	
+	POSITION CAMERA camX#, camY#, camZ#
+	POINT CAMERA OBJECT POSITION X(1), OBJECT POSITION Y(1), OBJECT POSITION Z(1)
+	
+	preScrollWheel# = currentScrollWheel#
+ENDFUNCTION
+

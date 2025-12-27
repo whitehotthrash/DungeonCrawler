@@ -1,0 +1,19 @@
+Rem Effects when mouse hovers player character
+
+FUNCTION On_Hover()
+	mx = MOUSEX()
+	my = MOUSEY()
+	
+	hitObj = PICK OBJECT(mx, my, 1, 1)
+	
+	IF hitObj = 1
+		SET OBJECT AMBIENT 1, 1
+		SET OBJECT EMISSIVE 1, 500
+		SET OBJECT DIFFUSE 1, 1
+		TEXT 377, 220, "Player"
+	ELSE
+		SET OBJECT AMBIENT 1, 0
+ 		SET OBJECT EMISSIVE 1, 100
+		SET OBJECT DIFFUSE 1, 150
+	ENDIF
+ENDFUNCTION
