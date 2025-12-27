@@ -1,0 +1,46 @@
+Rem ***** Included Source File *****
+// DO
+//     yaw# = CAMERA ANGLE Y(0)
+//     strafeSpeed# = 0.3
+//     camX# = CAMERA POSITION X(0)
+//     camY# = CAMERA POSITION Y(0)
+//     camZ# = CAMERA POSITION Z(0)
+//     
+//     //CONTROL CAMERA USING ARROWKEYS 0, 0.5, 0.5
+//     IF upkey() = 1 THEN MOVE CAMERA 0, 0.5
+//     IF downkey() = 1 THEN MOVE CAMERA 0, -0.5
+//     IF leftkey() = 1 THEN y#=y#-1
+//     IF rightkey() = 1 THEN y#=y#+1  
+//     XROTATE CAMERA 0,x#:YROTATE CAMERA 0,y#:ZROTATE CAMERA 0,z#
+// 
+//     
+//     IF inkey$() = "q" 
+//         strafeX# = COS((yaw# - 90) * PI / 180)
+//         strafeZ# = SIN((yaw# - 90) * PI / 180)
+//         POSITION CAMERA camX# - strafeX# * strafeSpeed#, camY#, camZ# - strafeZ#
+//     ENDIF
+//     
+//     IF inkey$() = "e" 
+//         strafeX# = COS((yaw# + 90) * PI / 180)
+//         strafeZ# = SIN((yaw# + 90) * PI / 180)
+//         POSITION CAMERA camX# + strafeX# * strafeSpeed#, camY#, camZ# + strafeZ#
+//     ENDIF
+//     
+//     IF inkey$() = "w"
+//         camY# = camY# + 0.3
+//         POSITION CAMERA camX#, camY#, camZ#
+//     ENDIF
+//     
+//     IF inkey$() = "s"
+//         camY# = camY# - 0.3
+//         POSITION CAMERA camX#, camY#, camZ#
+//     ENDIF
+//     
+//     
+//     TEXT 20, SCREEN HEIGHT()-40,desc$
+//     	fps$="fps: "+str$(screen fps())
+//     TEXT SCREEN WIDTH()-20-TEXT WIDTH(fps$),SCREEN HEIGHT()-40,fps$
+//     
+//     rem Update screen
+//     SYNC
+// LOOP

@@ -1,0 +1,27 @@
+Rem ***** Included Source File *****
+
+// Cube = 1
+
+// sync on
+// sync rate 90
+// MAKE OBJECT CUBE Cube,10
+// 	DO
+// 		control camera using arrowkeys 0, 0.5, 0.5
+// 		YROTATE OBJECT 1,OBJECT ANGLE Y(1)+0.5
+// 		XROTATE OBJECT 1,OBJECT ANGLE X(1)+1
+// 		sync
+// 	LOOP
+// 		// If statement
+// 		INPUT "Enter Your Age>",age
+// 		IF age>17 PRINT "You can buy a lottery ticket" 
+// 		ELSE PRINT "You're too young, n00b"
+// 		ENDIF
+// 		// If expression
+// 		INPUT "Enter your age>", age
+// 		IF age>17 THEN PRINT "You can buy a lottery ticket" ELSE PRINT "You're too young, n00b"
+// 	LOOP
+
+// DO
+// 	SET CURSOR RND(640),RND(480)
+// 	PRINT
+// LOOP

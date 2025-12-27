@@ -1,0 +1,14 @@
+Rem ***** Included Source File *****
+
+REM Start of program
+// DO
+// 	BetterPrint(100, 100, "Hello world")
+// LOOP
+// 
+// FUNCTION BetterPrint(x, y, t$)
+// 	SET CURSOR x,y
+// 	PRINT t$
+// ENDFUNCTION
+
+// PRINT "press any mouse button"
+// WAIT MOUSE
