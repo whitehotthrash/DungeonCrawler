@@ -1,12 +1,13 @@
 Rem Effects when mouse hovers player character
 
 FUNCTION On_Hover()
-	mx = MOUSEX()
-	my = MOUSEY()
+	mx# = MOUSEX()
+	my# = MOUSEY()
 	
-	hitObj = PICK OBJECT(mx, my, 1, 1)
+	hitPlayer = PICK OBJECT(mx#, my#, 1, 1)
+	hitEnemy = PICK OBJECT(mx#, my#, 3, 3)
 	
-	IF hitObj = 1
+	IF hitPlayer = 1
 		SET OBJECT AMBIENT 1, 1
 		SET OBJECT EMISSIVE 1, 500
 		SET OBJECT DIFFUSE 1, 1
@@ -15,5 +16,16 @@ FUNCTION On_Hover()
 		SET OBJECT AMBIENT 1, 0
  		SET OBJECT EMISSIVE 1, 100
 		SET OBJECT DIFFUSE 1, 150
+	ENDIF
+	
+	IF hitEnemy = 3
+		SET OBJECT AMBIENT 3, 1
+		SET OBJECT EMISSIVE 3, 500
+		SET OBJECT DIFFUSE 3, 1
+		TEXT mx# + 10, my#, "Thug"
+	ELSE
+		SET OBJECT AMBIENT 3, 0
+ 		SET OBJECT EMISSIVE 3, 100
+		SET OBJECT DIFFUSE 3, 150
 	ENDIF
 ENDFUNCTION

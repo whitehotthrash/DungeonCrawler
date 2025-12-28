@@ -33,4 +33,3 @@ FUNCTION Camera_Update()
 	
 	preScrollWheel# = currentScrollWheel#
 ENDFUNCTION
-

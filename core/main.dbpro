@@ -10,6 +10,8 @@ include2=characterMovement.dba
 include3=playerCharacterObject.dba
 include4=onHover.dba
 include5=trees.dba
+include6=world.dba
+include7=enemyObject.dba
 final source=_Temp.dbsource
 
 ; **** Executable Information  ***
