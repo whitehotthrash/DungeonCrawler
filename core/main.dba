@@ -17,6 +17,7 @@ Rem Main Loop
 DO
 	Click_To_Move()
 	Update_Player_Movement()
+	Check_Mouse_Click()
 	Camera_Update()
 	On_Hover()
 			

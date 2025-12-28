@@ -4,12 +4,14 @@ FUNCTION Init_Player_Character()
 	
 	LOAD OBJECT "assets\H-Babe-Idle.x", 1
 	APPEND OBJECT "assets\H-Babe-Move.x", 1, 25
+	APPEND OBJECT "assets\H-Babe-Attack1.x", 1, 50
 	LOOP OBJECT 1, 0, 24
 	YROTATE OBJECT 1, 180
 	FIX OBJECT PIVOT 1
 	LOAD SOUND "assets\Girly_slow.wav", 1
 	SCALE OBJECT 1, 120, 120, 120
-
+	SET OBJECT SPEED 1, 10
+	
 ENDFUNCTION
 
 //MAKE OBJECT PLAIN 2, 10, 10

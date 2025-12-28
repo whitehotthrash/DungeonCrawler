@@ -1,5 +1,7 @@
 Rem simple enemy entity
 
+GLOBAL enemyId#
+
 FUNCTION Init_Enemy_Object()
 	
 	LOAD OBJECT "assets\L-Thug-Idle.x", 3
@@ -11,5 +13,6 @@ FUNCTION Init_Enemy_Object()
 	SCALE OBJECT 3, 120, 120, 120
 	POSITION OBJECT 3, 5, 0, 5
 	SET OBJECT SPEED 3, 15
+	enemyId# = 3
 	
 ENDFUNCTION

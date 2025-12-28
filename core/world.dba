@@ -7,6 +7,7 @@ FUNCTION Init_World()
 	TEXTURE OBJECT 2, 10
 	SET OBJECT CULL 2, 0
 	
+	Rem set fog
 	SET OBJECT FOG 2, 1
 	FOG ON
 	FOG DISTANCE 1, 75
@@ -41,7 +42,8 @@ FUNCTION Init_World()
 	SET MATRIX HEIGHT 4, 10, 10, 100
 	UPDATE MATRIX 4
 	
-	LOAD MUSIC "assets\darkness.mp3", 1
-	LOOP MUSIC 1
+	Rem set world music
+	//LOAD MUSIC "assets\darkness.mp3", 1
+	//LOOP MUSIC 1
 	
 ENDFUNCTION

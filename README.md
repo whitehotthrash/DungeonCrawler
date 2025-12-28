@@ -1,4 +1,4 @@
-# Dungeon Crawler
+#Dungeon Crawler
 #### Version: early development
 
 ## Description
@@ -23,26 +23,33 @@
 - Create 'enemy' object
 - Added on-hover for enemy object
 - Ability to push project to GitHub from Windows XP
+- Add attack animation for player object
+- Click-to-attack enemy objects/ breakable objects
 
 
 ### Tasks To-Do
 - Add simple blob shadows for objects
-- Understand custom TEMPLATEs/ TYPEs
-- Understand sub-programs
+- Learn about custom TEMPLATEs/ TYPEs
+- Learn about sub-programs
 - Adjust 'sun' position
 - Create friendly NPC object
 - Create dialogue box for friendly NPC object
-- Add attack animation for player object
 - Load/ unload matrix chunks
 - Add cursor sprite
-- Click-to-attack enemy objects/ breakable objects
 - Probably learn trigonometry
+- Create health point system
+- Add hit and miss SFX
+- Sync hit and miss SFX with attack animation loop
+- Add death animations for player and NPCs
+- Implement simple dice roll system to determine hit/miss
+- Build on dice roll system
 
 
 ### Known Issues
 - Tree object branch transparency can hide tree trunk
 - Skysphere texture hidden from fog
 - On-hover lighting issue
+- Blob shadows will not render
 
 
 ### Issues Fixed
@@ -58,6 +65,5 @@
 - TreeMagik
 - Plant Life
 - DarkMATTER
-
 
 

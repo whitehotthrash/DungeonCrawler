@@ -2,19 +2,24 @@ Rem: Player Character Movement Logic
 
 GLOBAL movePlayerCharacterX#, movePlayerCharacterY#, movePlayerCharacterz#, isPlayerCharacterMoving, playerCharacterMoveSpeed#
 GLOBAL idleStartFrame#, idleEndFrame#, walkStartFrame#, walkEndFrame#, isWalkAnimationPlaying, walkingfx#
+GLOBAL isChasingEnemy, isAttackingEnemy, attackStartFrame#, attackEndFrame#
 
 FUNCTION Init_Player_Movement()
 	movePlayerCharacterX#     = OBJECT POSITION X(1)
 	movePlayerCharacterY#     = OBJECT POSITION Y(1)
 	movePlayerCharacterZ#     = OBJECT POSITION Z(1)
 	isPlayerCharacterMoving   = 0
+	isChasingEnemy            = 0
 	playerCharacterMoveSpeed# = 0.025
 	idleStartFrame#           = 0
 	idleEndFrame#             = 24
 	walkStartFrame#           = idleEndFrame# + 1
-	walkEndFrame#             = TOTAL OBJECT FRAMES(1) - 1
+	walkEndFrame#             = 50
+	attackStartFrame#         = walkEndFrame# + 1
+	attackEndFrame#           = TOTAL OBJECT FRAMES(1) - 1
 	isWalkAnimationPlaying    = 0
-	SET OBJECT SPEED 1, 10
+	isChasingEnemy            = 0
+	isAttackingEnemy          = 0
 ENDFUNCTION
 
 FUNCTION Click_To_Move()
@@ -61,7 +66,7 @@ FUNCTION Click_To_Move()
 		
 		Rem play walk animation
 		IF isWalkAnimationPlaying = 0
-			LOOP OBJECT 1, 29, walkEndFrame#
+			LOOP OBJECT 1, 30, walkEndFrame#
 			SET OBJECT SPEED 1, 31.5
 			isWalkAnimationPlaying = 1
 			LOOP SOUND 1
@@ -95,13 +100,40 @@ FUNCTION Update_Player_Movement()
 		ELSE
 			isPlayerCharacterMoving = 0
 			
-			IF isWalkAnimationPlaying = 1				
+			Rem player stops at destination
+			IF isWalkAnimationPlaying = 1
+				isWalkAnimationPlaying = 0			
 				LOOP OBJECT 1, idleStartFrame#, idleEndFrame#
 				SET OBJECT SPEED 1, 10
-				isWalkAnimationPlaying = 0
 				STOP SOUND 1
+			ENDIF
+			
+			Rem player stops after clicking enemy and attacks
+			IF isWalkAnimationPlaying = 0 AND isChasingEnemy = 1
+				isChasingEnemy = 0
+				isAttackingEnemy = 1
+				LOOP OBJECT 1, attackStartFrame#, attackEndFrame#
+				SET OBJECT SPEED 1, 35
 			ENDIF
 		ENDIF
 
+	ENDIF
+ENDFUNCTION
+
+Rem check if floor or enemy was clicked
+FUNCTION Check_Mouse_Click()
+	IF MOUSECLICK() = 1
+	
+		mx# = MOUSEX()
+		my# = MOUSEY()
+		
+		clickedObj# = PICK OBJECT(mx#, my#, 3, 5)
+		
+		IF clickedObj# = enemyId#
+			movePlayerCharacterX# = OBJECT POSITION X(enemyId#)
+			movePlayerCharacterZ# = OBJECT POSITION Z(enemyId#)
+			isPlayerCharacterMoving = 1
+			isChasingEnemy = 1
+		ENDIF
 	ENDIF
 ENDFUNCTION
