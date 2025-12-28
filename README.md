@@ -16,14 +16,14 @@
 - Moved camera to bird's eye view
 - Locked bird's eye camera to player object as center
 - Added scroll wheel zoom
-- Added click-to-move player object
-- Create on-hover for player object
+- Added click-to-move player object functionality
+- Create on-hover feature for player object
 - Added footstep sound fx to player object
 - Create world fog to hide edge of matrices
 - Create 'enemy' object
-- Added on-hover for enemy object
+- Added on-hover feature for enemy object
 - Ability to push project to GitHub from Windows XP
-- Add attack animation for player object
+- Added attack animation for player object
 - Click-to-attack enemy objects/ breakable objects
 
 
