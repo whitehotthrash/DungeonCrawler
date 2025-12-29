@@ -22,12 +22,7 @@ DO
 	On_Hover()
 			
     Rem Logging
-// 	PRINT "object x:";OBJECT POSITION X(1)
-// 	PRINT "object y:";OBJECT POSITION Y(1)
-// 	PRINT "object z:";OBJECT POSITION Z(1)
-	
-// 	ox# = RND(OBJECT POSITION X(1))
-// 
+
 // 	objectX$ = "OX: " + STR$(ox#)
 // 	TEXT SCREEN WIDTH()-500-TEXT WIDTH(objectX$), SCREEN HEIGHT()-90, objectX$
         
