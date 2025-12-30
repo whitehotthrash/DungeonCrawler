@@ -7,7 +7,7 @@
 <p>All textures, models, sounds etc are currently used from the free media and assets that came with the DVD. These are placeholders for now until I either make my own or buy some.<p>
 
 <p>Find the project's current progress here:
-*github.com/users/whitehotthrash/projects/1/views/1*
+**github.com/users/whitehotthrash/projects/1/views/1**
 <p>
 
 

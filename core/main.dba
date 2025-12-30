@@ -10,6 +10,7 @@ Init_Player_Movement()
 Camera_Init()
 //Init_Trees()
 Init_Enemy_Object()
+Init_Enemy_AI()
 
 SYNC ON : SYNC RATE 60
 
@@ -20,12 +21,9 @@ DO
 	Check_Mouse_Click()
 	Camera_Update()
 	On_Hover()
+	Enemy_AI_Update()
 			
-    Rem Logging
-
-// 	objectX$ = "OX: " + STR$(ox#)
-// 	TEXT SCREEN WIDTH()-500-TEXT WIDTH(objectX$), SCREEN HEIGHT()-90, objectX$
-        
+    Rem Logging        
     fps$="fps: " + STR$(SCREEN FPS())
     TEXT SCREEN WIDTH()-20-TEXT WIDTH(fps$),SCREEN HEIGHT()-40, fps$
     

@@ -12,6 +12,7 @@ include4=onHover.dba
 include5=trees.dba
 include6=world.dba
 include7=enemyObject.dba
+include8=updateEnemyAI.dba
 final source=_Temp.dbsource
 
 ; **** Executable Information  ***
