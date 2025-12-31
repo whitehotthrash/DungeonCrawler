@@ -4,15 +4,15 @@ GLOBAL enemyId#
 
 FUNCTION Init_Enemy_Object()
 	
-	LOAD OBJECT "assets\L-Thug-Idle.x", 3
-	// APPEND OBJECT "assets\", 1, 25
-	LOOP OBJECT 3 //, 0, 24
-	YROTATE OBJECT 3, 180
-	FIX OBJECT PIVOT 3
-	//LOAD SOUND "assets\Earth slow.wav", 2
-	SCALE OBJECT 3, 120, 120, 120
-	POSITION OBJECT 3, 15, 0, 15
-	SET OBJECT SPEED 3, 15
 	enemyId# = 3
+	LOAD OBJECT "assets\L-Thug-Idle.x", enemyId#
+	// APPEND OBJECT "assets\", 1, 25
+	LOOP OBJECT enemyId# //, 0, 24
+	YROTATE OBJECT enemyId#, 180
+	FIX OBJECT PIVOT enemyId#
+	//LOAD SOUND "assets\Earth slow.wav", 2
+	SCALE OBJECT enemyId#, 120, 120, 120
+	POSITION OBJECT enemyId#, 15, 0, 15
+	SET OBJECT SPEED enemyId#, 15
 	
 ENDFUNCTION

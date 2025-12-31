@@ -2,7 +2,7 @@ Rem: Player Character Movement Logic
 
 GLOBAL movePlayerCharacterX#, movePlayerCharacterY#, movePlayerCharacterz#, isPlayerCharacterMoving, playerCharacterMoveSpeed#
 GLOBAL idleStartFrame#, idleEndFrame#, walkStartFrame#, walkEndFrame#, isWalkAnimationPlaying, walkingfx#
-GLOBAL isChasingEnemy, isAttackingEnemy, attackStartFrame#, attackEndFrame#
+GLOBAL isChasingEnemy, isAttackingEnemy, attackStartFrame#, attackEndFrame#, attackRadius#
 
 FUNCTION Init_Player_Movement()
 	movePlayerCharacterX#     = OBJECT POSITION X(1)
@@ -17,6 +17,7 @@ FUNCTION Init_Player_Movement()
 	walkEndFrame#             = 50
 	attackStartFrame#         = walkEndFrame# + 1
 	attackEndFrame#           = TOTAL OBJECT FRAMES(1) - 1
+	attackRadius#             = 2.0
 	isWalkAnimationPlaying    = 0
 	isChasingEnemy            = 0
 	isAttackingEnemy          = 0

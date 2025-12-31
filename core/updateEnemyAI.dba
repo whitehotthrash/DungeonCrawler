@@ -1,10 +1,11 @@
 Rem Controls enemy sight radius and movement
 
-GLOBAL enemySightRadius#, enemyMovementSpeed#, isEnemyIdle, isEnemyChasing, isEnemyMoving
+GLOBAL enemySightRadius#, enemyMovementSpeed#, enemyStopRadius#, isEnemyIdle, isEnemyChasing, isEnemyMoving
 
 FUNCTION Init_Enemy_AI()
 	enemySightRadius#   = 5.0
-	enemyMovementSpeed# = 15.0
+	enemyMovementSpeed# = 0.3
+	enemyStopRadius#    = 2.0
 	isEnemyChasing      = 0
 	isEnemyMoving       = 0
 	isEnemyIdle         = 1
@@ -16,19 +17,31 @@ FUNCTION Enemy_AI_Update()
 	playerX# = OBJECT POSITION X(1)
 	playerZ# = OBJECT POSITION Z(1)
 	
-	enemyX#  = OBJECT POSITION X(3)
-	enemyZ#  = OBJECT POSITION Z(3)
+	enemyX#  = OBJECT POSITION X(enemyId#)
+	enemyZ#  = OBJECT POSITION Z(enemyId#)
 	
 	deltaX#  = playerX# - enemyX#
 	deltaZ#  = playerZ# - enemyZ#
 	distanceToPlayer# = SQRT((deltaX# * deltaX#) + (deltaZ# * deltaZ#))
 	
-	Rem 
+	Rem TO DO: Refine
 	IF distanceToPlayer# < enemySightRadius#
 		isEnemyIdle    = 0
 		isEnemyChasing = 1
 		isEnemyMoving  = 1
-		POSITION OBJECT 3, playerX#, OBJECT POSITION Y(1), playerZ#
+		
+		IF distanceToPlayer# > enemyStopRadius#
+			Rem normalise
+			deltaX# = deltaX# / distanceToPlayer#
+			deltaZ# = deltaZ# / distanceToPlayer#
+			
+			Rem move towards player
+			enemyX# = enemyX# + deltaX# * enemyMovementSpeed#
+			enemyZ# = enemyZ# + deltaZ# * enemyMovementSpeed#
+			
+			POSITION OBJECT enemyId#, playerX#, OBJECT POSITION Y(enemyId#), playerZ#
+			
+		ENDIF
 	ENDIF
 
 ENDFUNCTION
