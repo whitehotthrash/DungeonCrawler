@@ -13,7 +13,7 @@ FUNCTION Init_Enemy_Object()
 	FIX OBJECT PIVOT enemyId#
 	LOAD SOUND "assets\Earth slow.wav", 2
 	SCALE OBJECT enemyId#, 120, 120, 120
-	POSITION OBJECT enemyId#, 15, 0, 15
+	POSITION OBJECT enemyId#, 10, 0, 10
 	SET OBJECT SPEED enemyId#, 10
 	
 ENDFUNCTION
