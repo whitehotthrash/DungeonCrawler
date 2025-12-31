@@ -77,9 +77,10 @@ FUNCTION Click_To_Move()
 ENDFUNCTION
 
 FUNCTION Update_Player_Movement()
+	currentCharX# = OBJECT POSITION X(1)
+	currentCharZ# = OBJECT POSITION Z(1)
+
 	IF isPlayerCharacterMoving = 1
-		currentCharX# = OBJECT POSITION X(1)
-		currentCharZ# = OBJECT POSITION Z(1)
 		
 		deltaX# = movePlayerCharacterX# - currentCharX#
 		deltaZ# = movePlayerCharacterZ# - currentCharZ#

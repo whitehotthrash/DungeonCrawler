@@ -3,16 +3,17 @@ Rem simple enemy entity
 GLOBAL enemyId#
 
 FUNCTION Init_Enemy_Object()
-	
+
 	enemyId# = 3
 	LOAD OBJECT "assets\L-Thug-Idle.x", enemyId#
-	// APPEND OBJECT "assets\", 1, 25
-	LOOP OBJECT enemyId# //, 0, 24
+	APPEND OBJECT "assets\L-Thug-Move.x", enemyId#, 25
+	APPEND OBJECT "assets\L-Thug-Attack1.x", enemyId#, 50
+	LOOP OBJECT enemyId#, 0, 25
 	YROTATE OBJECT enemyId#, 180
 	FIX OBJECT PIVOT enemyId#
-	//LOAD SOUND "assets\Earth slow.wav", 2
+	LOAD SOUND "assets\Earth slow.wav", 2
 	SCALE OBJECT enemyId#, 120, 120, 120
 	POSITION OBJECT enemyId#, 15, 0, 15
-	SET OBJECT SPEED enemyId#, 15
+	SET OBJECT SPEED enemyId#, 10
 	
 ENDFUNCTION

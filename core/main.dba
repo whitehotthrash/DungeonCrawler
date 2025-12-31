@@ -27,5 +27,9 @@ DO
     fps$="fps: " + STR$(SCREEN FPS())
     TEXT SCREEN WIDTH()-20-TEXT WIDTH(fps$),SCREEN HEIGHT()-40, fps$
     
+    
+    //currentFrame# = OBJECT FRAME(enemyId#)
+	//PRINT "frames: " + STR$(currentFrame#)
+    
    SYNC
 LOOP
