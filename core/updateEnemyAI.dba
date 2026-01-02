@@ -68,8 +68,12 @@ FUNCTION Enemy_AI_Update()
 				LOOP OBJECT enemyId#, 0, 25
 			ENDIF
 			
+			Rem enemy is attacking
+			LOOP OBJECT enemyId#, 50, 75
+			SET OBJECT SPEED enemyId#, 30
+			
 			isEnemyChasing = 0
-			isEnemyIdle    = 1
+			isEnemyIdle    = 0
 
 		ENDIF
 		

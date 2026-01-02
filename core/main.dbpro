@@ -37,10 +37,10 @@ app title=DS Clone
 
 ; graphics mode options: fullscreen, window, desktop, fulldesktop, hidden
 graphics mode=window
-fullscreen resolution=1280x1024x32
+fullscreen resolution=1920x1080x32
 
 ; arbitrary sizes are valid for windowed mode
-window resolution=800x600
+window resolution=640x480
 
 ; **** External Files Information ****
 
