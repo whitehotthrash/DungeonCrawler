@@ -116,6 +116,7 @@ FUNCTION Update_Player_Movement()
 				isAttackingEnemy = 1
 				LOOP OBJECT 1, attackStartFrame#, attackEndFrame#
 				SET OBJECT SPEED 1, 35
+				POINT OBJECT 1, OBJECT POSITION X(enemyId#), 0, OBJECT POSITION Z(enemyId#)
 			ENDIF
 		ENDIF
 
