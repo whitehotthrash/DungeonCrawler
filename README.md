@@ -1,4 +1,4 @@
-# Dungeon Crawler
+# Legacy of Fire and Shadow (working title)
 #### Version: early development
 
 ## Description
