@@ -77,50 +77,82 @@ FUNCTION Click_To_Move()
 ENDFUNCTION
 
 FUNCTION Update_Player_Movement()
-	currentCharX# = OBJECT POSITION X(1)
-	currentCharZ# = OBJECT POSITION Z(1)
 
 	IF isPlayerCharacterMoving = 1
 		
-		deltaX# = movePlayerCharacterX# - currentCharX#
-		deltaZ# = movePlayerCharacterZ# - currentCharZ#
-		
-		distanceToTarget# = SQRT((deltaX# * deltaX#) + (deltaZ# * deltaZ#))
-		
-		IF distanceToTarget# > 1.0
-		
-			Rem normalize direction
-			normalizedX# = deltaX# / distanceToTarget#
-			normalizedZ# = deltaZ# / distanceToTarget#
-		
-			Rem move towards target
-			newCharX# = currentCharX# + normalizedX# * playerCharacterMoveSpeed#
-			newCharZ# = currentCharZ# + normalizedZ# * playerCharacterMoveSpeed#
+		currentCharX# = OBJECT POSITION X(1)
+		currentCharZ# = OBJECT POSITION Z(1)
+	
+		IF isChasingEnemy = 1
 			
-			POSITION OBJECT 1, newCharX#, OBJECT POSITION Y(1), newCharZ#
+			enemyX# = OBJECT POSITION X(enemyId#)
+			enemyZ# = OBJECT POSITION Z(enemyId#)
 			
-		ELSE
-			isPlayerCharacterMoving = 0
+			deltaX# = enemyX# - currentCharX#
+			deltaZ# = enemyZ# - currentCharZ#
+			distanceToTarget# = SQRT((deltaX# * deltaX#) + (deltaZ# * deltaZ#))
 			
-			Rem player stops at destination
-			IF isWalkAnimationPlaying = 1
-				isWalkAnimationPlaying = 0			
-				LOOP OBJECT 1, idleStartFrame#, idleEndFrame#
-				SET OBJECT SPEED 1, 10
-				STOP SOUND 1
-			ENDIF
+			IF distanceToTarget# > attackRadius#
 			
-			Rem player stops after clicking enemy and attacks
-			IF isWalkAnimationPlaying = 0 AND isChasingEnemy = 1
-				isChasingEnemy = 0
-				isAttackingEnemy = 1
+				normalizedX# = deltaX# / distanceToTarget#
+ 				normalizedZ# = deltaZ# / distanceToTarget#
+ 				
+ 				newCharX# = currentCharX# + normalizedX# * playerCharacterMoveSpeed#
+				newCharZ# = currentCharZ# + normalizedZ# * playerCharacterMoveSpeed#
+				
+				POSITION OBJECT 1, newCharX#, OBJECT POSITION Y(1), newCharZ#
+				
+			ELSE
+				
+				isPlayerCharacterMoving = 0
+				isChasingEnemy          = 0
+				isAttackingEnemy        = 1
+				
+				Rem start attacking
 				LOOP OBJECT 1, attackStartFrame#, attackEndFrame#
 				SET OBJECT SPEED 1, 35
-				POINT OBJECT 1, OBJECT POSITION X(enemyId#), 0, OBJECT POSITION Z(enemyId#)
+				STOP SOUND 1
+				POINT OBJECT 1, enemyX#, 0, enemyZ#
+				
 			ENDIF
-		ENDIF
+			
+		ELSE
 
-	ENDIF
+			Rem normal click to move
+			deltaX# = movePlayerCharacterX# - currentCharX#
+			deltaZ# = movePlayerCharacterZ# - currentCharZ#
+			
+			distanceToTarget# = SQRT((deltaX# * deltaX#) + (deltaZ# * deltaZ#))
+			
+			IF distanceToTarget# > 1.0
+			
+				Rem normalize direction
+				normalizedX# = deltaX# / distanceToTarget#
+				normalizedZ# = deltaZ# / distanceToTarget#
+			
+				Rem move towards target
+				newCharX# = currentCharX# + normalizedX# * playerCharacterMoveSpeed#
+				newCharZ# = currentCharZ# + normalizedZ# * playerCharacterMoveSpeed#
+				
+				POSITION OBJECT 1, newCharX#, OBJECT POSITION Y(1), newCharZ#
+				
+			ELSE
+				isPlayerCharacterMoving = 0
+				
+				Rem player stops at destination
+				IF isWalkAnimationPlaying = 1
+					isWalkAnimationPlaying = 0			
+					LOOP OBJECT 1, idleStartFrame#, idleEndFrame#
+					SET OBJECT SPEED 1, 10
+					STOP SOUND 1
+				ENDIF Rem player stops
+				
+			ENDIF Rem distance to target greater than 1.0
+			
+		ENDIF Rem isChasingEnemy = 1
+			
+	ENDIF Rem is player moving = 1
+		
 ENDFUNCTION
 
 Rem check if floor or enemy was clicked
@@ -133,10 +165,16 @@ FUNCTION Check_Mouse_Click()
 		clickedObj# = PICK OBJECT(mx#, my#, 3, 5)
 		
 		IF clickedObj# = enemyId#
-			movePlayerCharacterX# = OBJECT POSITION X(enemyId#)
-			movePlayerCharacterZ# = OBJECT POSITION Z(enemyId#)
 			isPlayerCharacterMoving = 1
-			isChasingEnemy = 1
+			isChasingEnemy          = 1
+		ELSE
+			Rem clicked the ground
+			isChasingEnemy          = 0
+			isAttackingEnemy        = 0
+			isPlayerCharacterMoving = 1
+			STOP OBJECT 1
+			LOOP OBJECT 1, 30, walkEndFrame#
+			SET OBJECT SPEED 1, 31.5
 		ENDIF
 	ENDIF
 ENDFUNCTION
