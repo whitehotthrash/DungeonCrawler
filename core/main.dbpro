@@ -13,6 +13,7 @@ include5=trees.dba
 include6=world.dba
 include7=enemyObject.dba
 include8=updateEnemyAI.dba
+include9=characterMovementUpdated.dba
 final source=_Temp.dbsource
 
 ; **** Executable Information  ***
@@ -46,7 +47,7 @@ window resolution=640x480
 
 ; **** Media ****
 ; Example entries: media1=graphics\*.jpg
-media root path=C:\Program Files\The Game Creators\Dark Basic Professional\Projects\MyFirstGame\src\core\
+media root path=C:\Program Files\The Game Creators\Dark Basic Professional\Projects\Legacy Of Fire And Shadow\src\core\
 
 ; **** Icons ****
 

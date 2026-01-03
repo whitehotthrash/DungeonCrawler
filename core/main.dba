@@ -6,7 +6,8 @@ Rem ***** Main Source File *****
 
 Init_World()
 Init_Player_Character()
-Init_Player_Movement()
+Init_Player_Interaction()
+//Init_Player_Movement()
 Camera_Init()
 //Init_Trees()
 Init_Enemy_Object()
@@ -16,9 +17,12 @@ SYNC ON : SYNC RATE 60
 
 Rem Main Loop
 DO
-	Click_To_Move()
-	Update_Player_Movement()
-	Check_Mouse_Click()
+	//Click_To_Move()
+	Click_Floor()
+	Move_Player()
+	//Update_Player_Movement()
+	//Check_Mouse_Click()
+	//Attack_Object()
 	Camera_Update()
 	On_Hover()
 	Enemy_AI_Update()

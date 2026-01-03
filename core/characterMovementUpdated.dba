@@ -1,0 +1,122 @@
+Rem Player Character Movement and Attack Logic
+
+GLOBAL playerPositionX#, playerPositionY#, playerPositionZ#  // player position variables
+GLOBAL isPlayerMoving, playerMovementSpeed#                  // movement variables
+GLOBAL isAttackingEnemy, attackRadius#              		 // attack variables
+
+FUNCTION Init_Player_Interaction()
+	Rem player position variables
+	playerPositionX#        = OBJECT POSITION X(1)
+	playerPositionY#        = OBJECT POSITION Y(1)
+	playerPositionZ#        = OBJECT POSITION Z(1)
+	
+	Rem movement variables
+	isPlayerMoving          = 0
+	playerMovementSpeed#    = 0.025
+	
+	Rem attack variables
+	isAttackingEnemy        = 0
+	attackRadius#           = 2.0
+ENDFUNCTION
+
+FUNCTION Click_Floor()
+	Rem detect left click 1
+	IF MOUSECLICK() = 1
+
+		Rem get nearest ray vector
+		PICK SCREEN MOUSEX(), MOUSEY(), 1
+		nearX# = CAMERA POSITION X(0) + GET PICK VECTOR X()
+		nearY# = CAMERA POSITION Y(0) + GET PICK VECTOR Y()
+		nearZ# = CAMERA POSITION Z(0) + GET PICK VECTOR Z()
+		
+		Rem get farthest ray vector
+		PICK SCREEN MOUSEX(), MOUSEY(), 1000
+		farX# = CAMERA POSITION X(0) + GET PICK VECTOR X()
+		farY# = CAMERA POSITION Y(0) + GET PICK VECTOR Y()
+		farZ# = CAMERA POSITION Z(0) + GET PICK VECTOR Z()
+		
+		Rem intersect ray with ground plane at y = 0
+		deltaY# = farY# - nearY#
+		IF deltaY# <> 0
+			t# = (0 - nearY#) / deltaY#
+			IF t# >= 0
+				playerPositionX#   = nearX# + (farX# - nearX#) * t#
+				playerPositionZ#   = nearZ# + (farZ# - nearZ#) * t#
+				isPlayerMoving = 1
+				LOOP OBJECT playerId#, 30, 50
+				SET OBJECT SPEED playerId#, 31.5
+				LOOP SOUND 1
+			ENDIF
+		ENDIF
+		
+		Rem make model turn to face intersected ray
+		POINT OBJECT 1, playerPositionX#, playerPositionY#, playerPositionZ#
+		
+		Rem play walk animation
+		//IF isPlayerMoving = 0
+			isPlayerMoving = 1
+// 			LOOP OBJECT playerId#, 30, 50
+// 			SET OBJECT SPEED playerId#, 31.5
+// 			LOOP SOUND 1
+		//ENDIF
+
+	ENDIF
+ENDFUNCTION
+
+FUNCTION Move_Player()
+
+	IF isPlayerMoving = 1
+
+		currentPlayerX# = OBJECT POSITION X(1)
+		currentPlayerZ# = OBJECT POSITION Z(1)
+		
+		deltaX# = playerPositionX# - currentPlayerX#
+		deltaZ# = playerPositionZ# - currentPlayerZ#
+		
+		distanceToTarget# = SQRT((deltaX# * deltaX#) + (deltaZ# * deltaZ#))
+		
+		IF distanceToTarget# > 1.0
+		
+			Rem normalize direction
+			normalizedX# = deltaX# / distanceToTarget#
+			normalizedZ# = deltaZ# / distanceToTarget#
+		
+			Rem move towards target
+			newCharX# = currentPlayerX# + normalizedX# * playerMovementSpeed#
+			newCharZ# = currentPlayerZ# + normalizedZ# * playerMovementSpeed#
+			
+			POSITION OBJECT 1, newCharX#, playerPositionY#, newCharZ#
+			
+		ELSE
+			Rem player stops at destination
+			IF isPlayerMoving = 1
+				isPlayerMoving = 0
+				LOOP OBJECT 1, 0, 24
+				SET OBJECT SPEED 1, 10
+				STOP SOUND 1
+			ENDIF
+	
+		ENDIF
+	ENDIF
+ENDFUNCTION
+
+FUNCTION Attack_Object()
+	Rem detect left click 1
+	interactableObj# = PICK OBJECT(MOUSEX(), MOUSEY(), 3, 5)
+	
+	IF MOUSECLICK() = 1 AND interactableObj# = enemyId#
+	
+		isPlayerMoving = 1
+		
+		enemyX# = OBJECT POSITION X(enemyId#)
+		enemyZ# = OBJECT POSITION Z(enemyId#)
+		
+		deltaX# = enemyX# - currentCharX#
+		deltaZ# = enemyZ# - currentCharZ#
+		distanceToTarget# = SQRT((deltaX# * deltaX#) + (deltaZ# * deltaZ#))
+		
+		
+		
+		
+	ENDIF
+ENDFUNCTION
