@@ -90,6 +90,7 @@ FUNCTION Move_Player()
 		ELSE
 			Rem player stops at destination
 			IF isPlayerMoving = 1
+				isWalkAnim     = 0
 				isPlayerMoving = 0
 				LOOP OBJECT 1, 0, 24
 				SET OBJECT SPEED 1, 10
@@ -107,6 +108,7 @@ FUNCTION Attack_Object()
 	IF MOUSECLICK() = 1 AND interactableObj# = enemyId#
 	
 		isPlayerMoving = 1
+		isWalkAnim     = 1
 		
 		enemyX# = OBJECT POSITION X(enemyId#)
 		enemyZ# = OBJECT POSITION Z(enemyId#)
