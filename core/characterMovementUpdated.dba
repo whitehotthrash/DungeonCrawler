@@ -3,6 +3,7 @@ Rem Player Character Movement and Attack Logic
 GLOBAL playerPositionX#, playerPositionY#, playerPositionZ#  // player position variables
 GLOBAL isPlayerMoving, playerMovementSpeed#                  // movement variables
 GLOBAL isAttackingEnemy, attackRadius#              		 // attack variables
+GLOBAL isWalkAnim, isAttackAnim                              // animation flags
 
 FUNCTION Init_Player_Interaction()
 	Rem player position variables
@@ -13,9 +14,11 @@ FUNCTION Init_Player_Interaction()
 	Rem movement variables
 	isPlayerMoving          = 0
 	playerMovementSpeed#    = 0.025
+	isWalkAnim              = 0
 	
 	Rem attack variables
 	isAttackingEnemy        = 0
+	isAttackAnim            = 0
 	attackRadius#           = 2.0
 ENDFUNCTION
 
@@ -43,9 +46,6 @@ FUNCTION Click_Floor()
 				playerPositionX#   = nearX# + (farX# - nearX#) * t#
 				playerPositionZ#   = nearZ# + (farZ# - nearZ#) * t#
 				isPlayerMoving = 1
-				LOOP OBJECT playerId#, 30, 50
-				SET OBJECT SPEED playerId#, 31.5
-				LOOP SOUND 1
 			ENDIF
 		ENDIF
 		
@@ -53,12 +53,12 @@ FUNCTION Click_Floor()
 		POINT OBJECT 1, playerPositionX#, playerPositionY#, playerPositionZ#
 		
 		Rem play walk animation
-		//IF isPlayerMoving = 0
-			isPlayerMoving = 1
-// 			LOOP OBJECT playerId#, 30, 50
-// 			SET OBJECT SPEED playerId#, 31.5
-// 			LOOP SOUND 1
-		//ENDIF
+		IF isWalkAnim = 0
+			isWalkAnim = 1
+			LOOP OBJECT playerId#, 30, 50
+			SET OBJECT SPEED playerId#, 31.5
+			LOOP SOUND 1
+		ENDIF
 
 	ENDIF
 ENDFUNCTION
