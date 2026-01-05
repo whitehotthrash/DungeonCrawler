@@ -20,6 +20,7 @@ DO
 	//Click_To_Move()
 	Click_Floor()
 	Move_Player()
+	Attack_Object()
 	//Update_Player_Movement()
 	//Check_Mouse_Click()
 	//Attack_Object()

@@ -2,7 +2,7 @@ Rem Player Character Movement and Attack Logic
 
 GLOBAL playerPositionX#, playerPositionY#, playerPositionZ#  // player position variables
 GLOBAL isPlayerMoving, playerMovementSpeed#                  // movement variables
-GLOBAL isAttackingEnemy, attackRadius#              		 // attack variables
+GLOBAL isChasingEnemy, isAttackingEnemy, attackRadius#       // attack variables
 GLOBAL isWalkAnim, isAttackAnim                              // animation flags
 
 FUNCTION Init_Player_Interaction()
@@ -17,6 +17,7 @@ FUNCTION Init_Player_Interaction()
 	isWalkAnim              = 0
 	
 	Rem attack variables
+	isChasingEnemy          = 0
 	isAttackingEnemy        = 0
 	isAttackAnim            = 0
 	attackRadius#           = 2.0
@@ -107,18 +108,38 @@ FUNCTION Attack_Object()
 	
 	IF MOUSECLICK() = 1 AND interactableObj# = enemyId#
 	
-		isPlayerMoving = 1
-		isWalkAnim     = 1
+		isChasingEnemy = 1
 		
 		enemyX# = OBJECT POSITION X(enemyId#)
 		enemyZ# = OBJECT POSITION Z(enemyId#)
 		
-		deltaX# = enemyX# - currentCharX#
-		deltaZ# = enemyZ# - currentCharZ#
+		deltaX# = enemyX# - currentPlayerX#
+		deltaZ# = enemyZ# - currentPlayerZ#
 		distanceToTarget# = SQRT((deltaX# * deltaX#) + (deltaZ# * deltaZ#))
 		
+		IF distanceToTarget# > attackRadius#
+			
+				normalizedX# = deltaX# / distanceToTarget#
+ 				normalizedZ# = deltaZ# / distanceToTarget#
+ 				
+ 				newCharX# = currentPlayerX# + normalizedX# * playerMovementSpeed#
+				newCharZ# = currentPlayerZ# + normalizedZ# * playerMovementSpeed#
+				
+				POSITION OBJECT 1, newCharX#, OBJECT POSITION Y(1), newCharZ#
+				
+			ELSE
+				
+				isPlayerMoving   = 0
+				isChasingEnemy   = 0
+				isAttackingEnemy = 1
+				
+				Rem start attacking
+				LOOP OBJECT 1, 48, 75
+				SET OBJECT SPEED 1, 35
+				STOP SOUND 1
+				POINT OBJECT 1, enemyX#, 0, enemyZ#
+				
+			ENDIF
+		ENDIF
 		
-		
-		
-	ENDIF
 ENDFUNCTION
