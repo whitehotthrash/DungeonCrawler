@@ -25,8 +25,7 @@ ENDFUNCTION
 
 FUNCTION Click_Floor()
 	Rem detect left click 1
-	IF MOUSECLICK() = 1
-		
+	IF MOUSECLICK() = 1	
 		Rem if clicking on enemy object, let Attack_Object handle logic
 		interactableObj# = PICK OBJECT(MOUSEX(), MOUSEY(), 3, 5)
 		IF interactableObj# = enemyId#
@@ -43,7 +42,6 @@ FUNCTION Click_Floor()
 		ENDIF
 			isPlayerMoving = 1
 		ELSE
-
 			Rem get nearest ray vector
 			PICK SCREEN MOUSEX(), MOUSEY(), 1
 			nearX# = CAMERA POSITION X(0) + GET PICK VECTOR X()
@@ -87,9 +85,8 @@ FUNCTION Click_Floor()
 ENDFUNCTION
 
 FUNCTION Move_Player()
-	
+	Rem move player from point a to enemy or point b
 	IF isPlayerMoving = 1
-
 		currentPlayerX# = OBJECT POSITION X(1)
 		currentPlayerZ# = OBJECT POSITION Z(1)
 		
@@ -148,23 +145,19 @@ FUNCTION Move_Player()
 					SET OBJECT SPEED 1, 10
 					STOP SOUND 1
 				ENDIF // ---- stop movement
-			ENDIF // ---- distance > stop distance
-		ENDIF // ---- is player moving 
-	ENDIF 
+			ENDIF // ---- is distance to floor x, y > stop distance
+		ENDIF // ---- is player chasing enemy 
+	ENDIF // ---- is player moving
 ENDFUNCTION
 
 FUNCTION Attack_Object()
-
 	Rem detect left click 1
 	interactableObj# = PICK OBJECT(MOUSEX(), MOUSEY(), 3, 5)
 	
 	IF MOUSECLICK() = 1 AND interactableObj# = enemyId#
-		
 		isChasingEnemy   = 1
 		isPlayerMoving   = 1
 		isAttackingEnemy = 0
 		isWalkAnim       = 1
-		
 	ENDIF
-		
 ENDFUNCTION

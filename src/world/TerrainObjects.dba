@@ -10,7 +10,7 @@ FUNCTION Init_Trees()
 	
 	FOR i = 0 TO treeCount# - 1
 		objID# = treeObjStart# + i
-		LOAD OBJECT "assets\tree\tree.x", objID#
+		LOAD OBJECT "assets\terrainObjectTextures\tree.x", objID#
 		FIX OBJECT PIVOT objID#
 		
 		xPos# = RND(200) - 100
