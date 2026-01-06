@@ -5,14 +5,6 @@ project name=MyFirstGame
 
 ; **** source file information ****
 main=main.dba
-include1=cameraControl.dba
-include2=playerCharacterObject.dba
-include3=onHover.dba
-include4=trees.dba
-include5=world.dba
-include6=enemyObject.dba
-include7=updateEnemyAI.dba
-include8=characterMovementUpdated.dba
 final source=_Temp.dbsource
 
 ; **** Executable Information  ***
