@@ -12,6 +12,7 @@ FUNCTION Init_Player_Character()
 	YROTATE OBJECT 1, 180
 	FIX OBJECT PIVOT 1
 	LOAD SOUND "assets\sfx\Girly_slow.wav", 1
+	LOAD SOUND "assets\sfx\Fist1.wav", 3
 	SCALE OBJECT 1, 120, 120, 120
 	SET OBJECT SPEED 1, 10
 	

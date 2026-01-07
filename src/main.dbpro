@@ -5,11 +5,19 @@ project name=MyFirstGame
 
 ; **** source file information ****
 main=main.dba
+include1=world\WorldManager.dba
+include2=world\TerrainObjects.dba
+include3=ui\UI_OnHover.dba
+include4=system\System_CameraControl.dba
+include5=gameplay\CharacterMovement.dba
+include6=gameplay\EnemyAI.dba
+include7=entities\EnemyObject.dba
+include8=entities\PlayerObject.dba
 final source=_Temp.dbsource
 
 ; **** Executable Information  ***
 ; build types: exe, media, installer, alone
-executable=DSClone.exe
+executable=Legacy of Fire and Shadow.exe
 build type=exe
 ; ** Media file compression **
 compression=NO
@@ -25,7 +33,7 @@ CLI=NO
 CommandLineArguments=
 
 ; **** display mode information ****
-app title=DS Clone
+app title=Legacy of Fire and Shadow
 
 ; graphics mode options: fullscreen, window, desktop, fulldesktop, hidden
 graphics mode=window
@@ -38,7 +46,7 @@ window resolution=640x480
 
 ; **** Media ****
 ; Example entries: media1=graphics\*.jpg
-media root path=C:\Program Files\The Game Creators\Dark Basic Professional\Projects\Legacy Of Fire And Shadow\src\core\
+media root path=C:\Program Files\The Game Creators\Dark Basic Professional\Projects\Legacy Of Fire And Shadow\src\src\
 
 ; **** Icons ****
 

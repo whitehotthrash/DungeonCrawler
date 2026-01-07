@@ -1,15 +1,16 @@
 Rem Controls enemy sight radius and movement
 
-GLOBAL enemySightRadius#, enemyMovementSpeed#, enemyStopRadius#, isEnemyIdle, isEnemyChasing, isEnemyMoving, enemyWalkSfx
+GLOBAL enemySightRadius#, enemyMovementSpeed#, enemyStopRadius#, isEnemyIdle, isEnemyChasing, isEnemyMoving, enemyWalkSfx, enemyAttackSfx, isEnemyAttacking
 
 FUNCTION Init_Enemy_AI()
 	enemySightRadius#   = 5.0
 	enemyMovementSpeed# = 0.02
-	enemyStopRadius#    = 2.0
+	enemyStopRadius#    = 1.5
 	isEnemyChasing      = 0
 	isEnemyMoving       = 0
 	isEnemyIdle         = 1
 	enemyWalkSfx        = 0
+	isEnemyAttacking    = 0
 ENDFUNCTION
 
 
@@ -68,13 +69,26 @@ FUNCTION Enemy_AI_Update()
 				LOOP OBJECT enemyId#, 0, 25
 			ENDIF
 			
+			
+			
 			Rem enemy is attacking
 			LOOP OBJECT enemyId#, 50, 75
 			SET OBJECT SPEED enemyId#, 30
 			
-			isEnemyChasing = 0
-			isEnemyIdle    = 0
+			IF isEnemyAttacking = 1
+				IF OBJECT FRAME(enemyId#) > 60 AND OBJECT FRAME(enemyId#) < 60.5
+					PLAY SOUND 4
+					enemyAttackSfx = 1
+				ENDIF
+			ELSE
+				STOP SOUND 4
+				enemyAttackSfx = 0
+			ENDIF
 
+			
+			isEnemyChasing   = 0
+			isEnemyIdle      = 0
+			isEnemyAttacking = 1
 		ENDIF
 		
 	ELSE

@@ -13,23 +13,24 @@ Init_Enemy_Object()
 Init_Enemy_AI()
 
 SYNC ON : SYNC RATE 60
-
 Rem Main Loop
 DO
 	Click_Floor()
 	Move_Player()
 	Attack_Object()
+	Attack_SFX()
 	Camera_Update()
 	On_Hover()
 	Enemy_AI_Update()
-			
+	
+    
     Rem Logging        
-    fps$="fps: " + STR$(SCREEN FPS())
-    TEXT SCREEN WIDTH()-20-TEXT WIDTH(fps$),SCREEN HEIGHT()-40, fps$
-    
-    
-    //currentFrame# = OBJECT FRAME(enemyId#)
-	//PRINT "frames: " + STR$(currentFrame#)
+//	fps$="fps: " + STR$(SCREEN FPS())
+//	TEXT SCREEN WIDTH()-20-TEXT WIDTH(fps$),SCREEN HEIGHT()-40, fps$
+
+
+//	objFra$=STR$(OBJECT FRAME(1))
+//	TEXT SCREEN WIDTH()-20-TEXT WIDTH(objFra$),SCREEN HEIGHT()-40, objFra$
     
    SYNC
 LOOP

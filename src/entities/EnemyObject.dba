@@ -12,6 +12,7 @@ FUNCTION Init_Enemy_Object()
 	YROTATE OBJECT enemyId#, 180
 	FIX OBJECT PIVOT enemyId#
 	LOAD SOUND "assets\sfx\Earth slow.wav", 2
+	LOAD SOUND "assets\sfx\Gun 2.wav", 4
 	SCALE OBJECT enemyId#, 120, 120, 120
 	POSITION OBJECT enemyId#, 10, 0, 10
 	SET OBJECT SPEED enemyId#, 10
