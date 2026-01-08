@@ -1,0 +1,10 @@
+Rem This governs dice rolls, hit and damage effects
+
+GLOBAL playerHealth#, enemyHealth#
+
+FUNCTION Init_HP()
+	playerHealth# = 10
+	enemyHealth#  = 10
+ENDFUNCTION
+
+

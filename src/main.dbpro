@@ -13,6 +13,9 @@ include5=gameplay\CharacterMovement.dba
 include6=gameplay\EnemyAI.dba
 include7=entities\EnemyObject.dba
 include8=entities\PlayerObject.dba
+include9=ui\UI_PlayerInterface.dba
+include10=gameplay\CombatSystem.dba
+include11=gameplay\MovementLoopManager.dba
 final source=_Temp.dbsource
 
 ; **** Executable Information  ***

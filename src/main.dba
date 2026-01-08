@@ -15,10 +15,7 @@ Init_Enemy_AI()
 SYNC ON : SYNC RATE 60
 Rem Main Loop
 DO
-	Click_Floor()
-	Move_Player()
-	Attack_Object()
-	Attack_SFX()
+	Update_Player_Movement()
 	Camera_Update()
 	On_Hover()
 	Enemy_AI_Update()

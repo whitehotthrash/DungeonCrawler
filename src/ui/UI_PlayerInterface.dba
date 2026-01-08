@@ -1,0 +1,5 @@
+Rem This includes player portrait, health and magic bars, weapon and magic slots, inventory button and character panel
+
+FUNCTION Draw_HP()
+	// draw sprite for health
+ENDFUNCTION
