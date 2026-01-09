@@ -14,23 +14,21 @@ FUNCTION Init_HP()
 ENDFUNCTION
 
 FUNCTION Take_Damage(entityId#)
-	IF isPlayerKilled = 1
-		PRINT "LOSE"
-	ENDIF
-	IF isEnemyKilled = 1
-		PRINT "WIN"
-	ENDIF
 	IF entityId# = playerId#
 		playerHealth# = playerHealth# - 4
 		IF playerHealth# < 0
 			playerHealth# = 0
 			isPlayerKilled = 1
-		ELSE
-			enemyHealth# = enemyHealth# - 4
-			IF enemyHealth# < 0
-				enemyHealth# = 0
-				isEnemyKilled = 1
-			ENDIF
+			PRINT "LOSE"
+		ENDIF
+	ENDIF
+		
+	IF entityId# = enemyId#
+		enemyHealth# = enemyHealth# - 0.1
+		IF enemyHealth# < 0
+			enemyHealth# = 0
+			isEnemyKilled = 1
+			PRINT "WIN"
 		ENDIF
 	ENDIF
 ENDFUNCTION
@@ -57,7 +55,7 @@ FUNCTION Hit_Roll()
 	
 	IF rollResult# > 6 AND hasAttacked = 1
 		hasHit = 1
-		Take_Damage(entityId#)
+		Take_Damage(enemyId#)
 	ELSE
 		hasHit = 0
 	ENDIF
