@@ -11,6 +11,7 @@ Camera_Init()
 //Init_Trees()
 Init_Enemy_Object()
 Init_Enemy_AI()
+Init_HP()
 
 SYNC ON : SYNC RATE 60
 Rem Main Loop
@@ -19,6 +20,7 @@ DO
 	Camera_Update()
 	On_Hover()
 	Enemy_AI_Update()
+	Combat_Loop()
 	
     
     Rem Logging        

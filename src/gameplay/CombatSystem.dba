@@ -1,10 +1,65 @@
 Rem This governs dice rolls, hit and damage effects
 
 GLOBAL playerHealth#, enemyHealth#
+GLOBAL hasAttacked, hasHit, isPlayerKilled, isEnemyKilled, damage#
 
 FUNCTION Init_HP()
-	playerHealth# = 10
-	enemyHealth#  = 10
+	playerHealth#  = 10
+	isPlayerKilled = 0
+	enemyHealth#   = 10
+	isEnemyKilled  = 0
+	hasAttacked    = 0
+	hasHit         = 0
+	damage#        = 4
 ENDFUNCTION
 
+FUNCTION Take_Damage(entityId#)
+	IF isPlayerKilled = 1
+		PRINT "LOSE"
+	ENDIF
+	IF isEnemyKilled = 1
+		PRINT "WIN"
+	ENDIF
+	IF entityId# = playerId#
+		playerHealth# = playerHealth# - 4
+		IF playerHealth# < 0
+			playerHealth# = 0
+			isPlayerKilled = 1
+		ELSE
+			enemyHealth# = enemyHealth# - 4
+			IF enemyHealth# < 0
+				enemyHealth# = 0
+				isEnemyKilled = 1
+			ENDIF
+		ENDIF
+	ENDIF
+ENDFUNCTION
 
+FUNCTION Attack_Roll(attackerId, defenderId)
+	hasAttacked = 0
+	IF isAttackingEnemy = 1
+		IF OBJECT FRAME(1) > 60 AND OBJECT FRAME(1) < 65.5
+			hasAttacked = 1
+		ELSE
+			hasAttacked = 0
+		ENDIF
+	ENDIF
+		
+ENDFUNCTION
+
+FUNCTION Hit_Roll()
+	hasHit = 0
+	IF hasAttacked = 1
+		rollOne# = RND(6)
+		rollTwo# = RND(6)
+		rollResult# = rollOne# + rollTwo#
+	ENDIF
+	
+	IF rollResult# > 6 AND hasAttacked = 1
+		hasHit = 1
+		Take_Damage(entityId#)
+	ELSE
+		hasHit = 0
+	ENDIF
+	PRINT hasAttacked,", ", hasHit,", ", playerHealth#,", ", enemyHealth#, ", ", rollResult#
+ENDFUNCTION
