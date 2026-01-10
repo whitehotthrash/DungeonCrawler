@@ -1,22 +1,26 @@
 Rem This governs dice rolls, hit and damage effects
 
 GLOBAL playerHealth#, enemyHealth#
-GLOBAL hasAttacked, hasHit, isPlayerKilled, isEnemyKilled, damage#
+GLOBAL attackTrigger, hasAttacked, hasHit, isPlayerKilled, isEnemyKilled
+GLOBAL hasRolledThisTurn, rollResult#, damage#
 
 FUNCTION Init_HP()
-	playerHealth#  = 10
-	isPlayerKilled = 0
-	enemyHealth#   = 10
-	isEnemyKilled  = 0
-	hasAttacked    = 0
-	hasHit         = 0
-	damage#        = 4
+	playerHealth#     = 10
+	isPlayerKilled    = 0
+	enemyHealth#      = 10
+	isEnemyKilled     = 0
+	hasAttacked       = 0
+	attackTrigger     = 0
+	rollResult#       = 0
+	hasRolledThisTurn = 0
+	hasHit            = 0
+	damage#           = 4
 ENDFUNCTION
 
 FUNCTION Take_Damage(entityId#)
 	IF entityId# = playerId#
 		playerHealth# = playerHealth# - 4
-		IF playerHealth# < 0
+		IF playerHealth# < 0.
 			playerHealth# = 0
 			isPlayerKilled = 1
 			PRINT "LOSE"
@@ -34,30 +38,32 @@ FUNCTION Take_Damage(entityId#)
 ENDFUNCTION
 
 FUNCTION Attack_Roll(attackerId, defenderId)
-	hasAttacked = 0
-	IF isAttackingEnemy = 1
-		IF OBJECT FRAME(1) > 60 AND OBJECT FRAME(1) < 65.5
-			hasAttacked = 1
-		ELSE
-			hasAttacked = 0
-		ENDIF
+	hasAttacked   = 0
+	IF isAttackingEnemy = 1 AND attackTrigger = 0
+		hasAttacked = 1
+		hasRolledThisTurn = 0
+		attackTrigger = 1
+	ELSE
+		hasAttacked = 0
 	ENDIF
-		
+
 ENDFUNCTION
 
 FUNCTION Hit_Roll()
 	hasHit = 0
-	IF hasAttacked = 1
-		rollOne# = RND(6)
-		rollTwo# = RND(6)
+	IF attackTrigger = 1 AND hasAttacked = 1
+		rollOne# = RND(5) + 1
+		rollTwo# = RND(5) + 1
 		rollResult# = rollOne# + rollTwo#
-	ENDIF
 	
-	IF rollResult# > 6 AND hasAttacked = 1
-		hasHit = 1
-		Take_Damage(enemyId#)
-	ELSE
-		hasHit = 0
+		IF rollResult# > 6
+			hasHit = 1
+			Take_Damage(enemyId#)
+		ELSE
+			hasHit = 0
+		ENDIF
+		
+		hasRolledThisTurn = 1
 	ENDIF
-	PRINT hasAttacked,", ", hasHit,", ", playerHealth#,", ", enemyHealth#, ", ", rollResult#
+	PRINT hasAttacked,", ",attackTrigger,", ", hasHit,", ", hasRolledThisTurn,", ", rollResult#,", ", enemyHealth#
 ENDFUNCTION
