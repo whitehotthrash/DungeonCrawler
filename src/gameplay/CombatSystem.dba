@@ -20,7 +20,7 @@ ENDFUNCTION
 FUNCTION Take_Damage(entityId#)
 	IF entityId# = playerId#
 		playerHealth# = playerHealth# - 4
-		IF playerHealth# < 0.
+		IF playerHealth# < 0
 			playerHealth# = 0
 			isPlayerKilled = 1
 			PRINT "LOSE"
@@ -38,7 +38,7 @@ FUNCTION Take_Damage(entityId#)
 ENDFUNCTION
 
 FUNCTION Attack_Roll(attackerId, defenderId)
-	hasAttacked   = 0
+	hasAttacked = 0
 	IF isAttackingEnemy = 1 AND attackTrigger = 0
 		hasAttacked = 1
 		hasRolledThisTurn = 0
@@ -51,7 +51,7 @@ ENDFUNCTION
 
 FUNCTION Hit_Roll()
 	hasHit = 0
-	IF attackTrigger = 1 AND hasAttacked = 1
+	IF attackTrigger = 1 AND hasAttacked = 1 AND hasRolledThisTurn = 0
 		rollOne# = RND(5) + 1
 		rollTwo# = RND(5) + 1
 		rollResult# = rollOne# + rollTwo#
@@ -59,11 +59,11 @@ FUNCTION Hit_Roll()
 		IF rollResult# > 6
 			hasHit = 1
 			Take_Damage(enemyId#)
-		ELSE
-			hasHit = 0
 		ENDIF
 		
-		hasRolledThisTurn = 1
+		attackTrigger = 0
+		hasAttacked   = 0
 	ENDIF
+
 	PRINT hasAttacked,", ",attackTrigger,", ", hasHit,", ", hasRolledThisTurn,", ", rollResult#,", ", enemyHealth#
 ENDFUNCTION
