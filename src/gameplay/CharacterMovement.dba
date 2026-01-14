@@ -109,14 +109,16 @@ FUNCTION Move_Player()
 				POSITION OBJECT 1, newCharX#, playerPositionY#, newCharZ#
 			ELSE
 				Rem within attack radius
-				isPlayerMoving = 0
-				isWalkAnim     = 0
-				PLAY OBJECT 1, 0, 24
-				SET OBJECT SPEED 1, 10
-				STOP SOUND 1
-				
-				isChasingEnemy   = 0
-				isAttackingEnemy = 1
+				IF isAttackingEnemy = 0
+					isPlayerMoving = 0
+					isWalkAnim     = 0
+// 					PLAY OBJECT 1, 0, 24
+// 					SET OBJECT SPEED 1, 10
+					STOP OBJECT playerId#
+					STOP SOUND 1
+					isChasingEnemy   = 0
+					isAttackingEnemy = 1
+				ENDIF
 				// Click_To_Attack()
 			ENDIF
 		ELSE
@@ -150,8 +152,8 @@ FUNCTION Move_Player()
 	
 	IF isPlayerMoving = 0 AND isChasingEnemy = 0 AND isWalkAnim = 0 AND isAttackingEnemy = 1
 		Click_To_Attack()
-		Attack_SFX()
 	ENDIF
+
 ENDFUNCTION
 
 FUNCTION Attack_Object()
@@ -161,30 +163,33 @@ FUNCTION Attack_Object()
 	IF MOUSECLICK() = 1 AND interactableObj# = enemyId#
 		isChasingEnemy   = 1
 		isPlayerMoving   = 1
-		//isAttackingEnemy = 0
+		isAttackingEnemy = 0
 		isWalkAnim       = 1
 	ENDIF
 	
 ENDFUNCTION
 
-FUNCTION Attack_SFX()
+FUNCTION Attack_Animation()
 	Rem play hit sfx while attacking enemy
-	IF isAttackingEnemy = 1 AND isAttackAnim = 0
-		isAttackAnim = 1
-		
-		IF isAttackAnim = 1
-			PLAY OBJECT playerId#, 60, 75
+	
+	IF isAttackingEnemy = 1
+	
+		IF isAttackAnim = 0
+			isAttackAnim = 1
+			STOP OBJECT playerId#
+			PLAY OBJECT playerId#, 63, 75
 			SET OBJECT SPEED playerId#, 45
-			isAttackAnim = 0
 		ENDIF
 		
-		IF OBJECT FRAME(1) > 65 AND OBJECT FRAME(1) < 65.5 AND isHitSfx = 0
+		IF OBJECT FRAME(playerId#) > 65 AND OBJECT FRAME(playerId#) < 65.5 AND isHitSfx = 0
 			PLAY SOUND 3
 			isHitSfx = 1
-		ELSE
-			STOP SOUND 1
-			isHitSfx = 0
 		ENDIF
 		
+		IF OBJECT PLAYING(playerId#) = 0
+			isAttackAnim = 0
+			isHitSfx     = 0
+		ENDIF
 	ENDIF
+		
 ENDFUNCTION

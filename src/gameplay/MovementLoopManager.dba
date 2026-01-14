@@ -4,5 +4,5 @@ FUNCTION Update_Player_Movement()
 	Click_Floor()
 	Move_Player()
 	Attack_Object()
-	Attack_SFX()
+	Attack_Animation()
 ENDFUNCTION
