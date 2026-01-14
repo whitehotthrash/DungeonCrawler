@@ -117,8 +117,6 @@ FUNCTION Move_Player()
 				
 				isChasingEnemy   = 0
 				isAttackingEnemy = 1
-				LOOP OBJECT 1, 50, 75
-				SET OBJECT SPEED 1, 35
 			ENDIF
 		ELSE
 			Rem normal floor-click movement

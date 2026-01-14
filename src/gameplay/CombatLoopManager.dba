@@ -1,6 +1,6 @@
 Rem Aggregator module for combat system
 
-FUNCTION Combat_Loop()
-	Attack_Roll(attackerId, defenderId)
-	Hit_Roll()
-ENDFUNCTION
+// FUNCTION Combat_Loop()
+// 	Attack_Roll(attackerId, defenderId)
+// 	Hit_Roll()
+// ENDFUNCTION

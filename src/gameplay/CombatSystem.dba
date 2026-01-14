@@ -1,7 +1,7 @@
 Rem This governs dice rolls, hit and damage effects
 
 GLOBAL playerHealth#, enemyHealth#
-GLOBAL attackTrigger, hasAttacked, hasHit, isPlayerKilled, isEnemyKilled
+GLOBAL hasAttacked, hasHit, isPlayerKilled, isEnemyKilled
 GLOBAL hasRolledThisTurn, rollResult#, damage#
 
 FUNCTION Init_HP()
@@ -10,7 +10,6 @@ FUNCTION Init_HP()
 	enemyHealth#      = 10
 	isEnemyKilled     = 0
 	hasAttacked       = 0
-	attackTrigger     = 0
 	rollResult#       = 0
 	hasRolledThisTurn = 0
 	hasHit            = 0
@@ -37,33 +36,61 @@ FUNCTION Take_Damage(entityId#)
 	ENDIF
 ENDFUNCTION
 
-FUNCTION Attack_Roll(attackerId, defenderId)
-	hasAttacked = 0
-	IF isAttackingEnemy = 1 AND attackTrigger = 0
-		hasAttacked = 1
+FUNCTION Click_To_Attack()
+
+		hasAttacked       = 0
+		hasHit            = 0
 		hasRolledThisTurn = 0
-		attackTrigger = 1
-	ELSE
-		hasAttacked = 0
-	ENDIF
-
-ENDFUNCTION
-
-FUNCTION Hit_Roll()
-	hasHit = 0
-	IF attackTrigger = 1 AND hasAttacked = 1 AND hasRolledThisTurn = 0
-		rollOne# = RND(5) + 1
-		rollTwo# = RND(5) + 1
-		rollResult# = rollOne# + rollTwo#
-	
-		IF rollResult# > 6
-			hasHit = 1
-			Take_Damage(enemyId#)
-		ENDIF
 		
-		attackTrigger = 0
-		hasAttacked   = 0
-	ENDIF
-
-	PRINT hasAttacked,", ",attackTrigger,", ", hasHit,", ", hasRolledThisTurn,", ", rollResult#,", ", enemyHealth#
+		IF MOUSECLICK() = 1 AND hasAttacked = 0
+			hasAttacked = 1
+			hasRolledThisTurn = 0
+			
+			IF hasAttacked = 1 AND MOUSECLICK() = 0
+				rollOne# = RND(5) + 1
+				rollTwo# = RND(5) + 1
+				rollResult# = rollOne# + rollTwo#
+				hasRolledThisTurn = 1
+				IF rollResult# > 6
+					hasHit = 1
+					Take_Damage(enemyId#)
+					PLAY OBJECT playerId#, 55, 75
+					SET OBJECT SPEED playerId#, 45
+				ENDIF
+				
+				hasAttacked = 0
+			ENDIF
+		ENDIF
+	PRINT hasAttacked,", ", hasHit,", ", hasRolledThisTurn,", ", rollResult#,", ", enemyHealth#
+	
 ENDFUNCTION
+
+// FUNCTION Attack_Roll(attackerId, defenderId)
+// 	hasAttacked = 0
+// 	IF MOUSECLICK() = 1 AND hasAttacked = 0
+// 		hasAttacked = 1
+// 		hasRolledThisTurn = 0
+// 		MOUSECLICK() = 0
+// 	ENDIF
+// 	MOUSECLICK() = 0
+// ENDFUNCTION
+// 
+// FUNCTION Hit_Roll()
+// 	hasHit = 0
+// 	
+// 	IF hasAttacked = 1 AND hasRolledThisTurn = 0
+// 		rollOne# = RND(5) + 1
+// 		rollTwo# = RND(5) + 1
+// 		rollResult# = rollOne# + rollTwo#
+// 
+// 		IF rollResult# > 6
+// 			hasHit = 1
+// 			Take_Damage(enemyId#)
+// 		ENDIF
+// 		
+// 		hasAttacked  = 0
+// 
+// 	ENDIF
+// 
+// 	PRINT hasAttacked,", ", hasHit,", ", hasRolledThisTurn,", ", rollResult#,", ", enemyHealth#
+// ENDFUNCTION
