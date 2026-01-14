@@ -54,9 +54,6 @@ FUNCTION Click_To_Attack()
 				
 				hasAttacked = 1
 				
-				PLAY OBJECT playerId#, 60, 75
-				SET OBJECT SPEED playerId#, 45
-				
 				IF rollResult# > 6
 					hasHit = 1
 					Take_Damage(enemyId#)
@@ -64,9 +61,8 @@ FUNCTION Click_To_Attack()
 					hasHit = 0
 				ENDIF
 			ENDIF
-			
 		ENDIF
-		
+			
 		lastMouseClick = MOUSECLICK()
 		
 	PRINT hasAttacked,", ", hasHit,", ", rollResult#,", ", enemyHealth#
