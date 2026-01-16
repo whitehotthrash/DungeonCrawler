@@ -3,6 +3,7 @@ Rem This governs dice rolls, hit and damage effects
 GLOBAL playerHealth#, enemyHealth#, isPlayerKilled, isEnemyKilled 
 GLOBAL hasAttacked, hasHit, lastMouseClick, lastAttackTime
 GLOBAL rollResult#, damage#, attackCooldown#, currentTime
+GLOBAL attackInputLocked
 
 FUNCTION Init_HP()
 	playerHealth#     = 10
@@ -16,6 +17,7 @@ FUNCTION Init_HP()
 	rollResult#       = 0
 	damage#           = 4
 	attackCooldown#   = 600
+	attackInputLocked = 0
 ENDFUNCTION
 
 FUNCTION Take_Damage(entityId#)
@@ -55,7 +57,7 @@ FUNCTION Click_To_Attack()
 				rollResult# = rollOne# + rollTwo#
 				
 				hasAttacked = 1
-				
+	
 				IF rollResult# > 6
 					hasHit = 1
 					Take_Damage(enemyId#)

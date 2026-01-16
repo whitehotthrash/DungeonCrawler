@@ -30,7 +30,7 @@ DO
 // 	PRINT "Is player moving? ", isPlayerMoving
 // 	PRINT "Is walk animation playing? ", isWalkAnim
 // 	PRINT "Is player chasing? ", isChasingEnemy
-// 	PRINT "Is player attacking? ", isAttackingEnemy
+ 	PRINT "Is player attacking? ", isAttackingEnemy
 	PRINT "Attack anim triggered? ", triggerAttackAnim
 	PRINT "Is attack animation playing? ", isAttackAnim
 	PRINT "current time timer ", currentTime

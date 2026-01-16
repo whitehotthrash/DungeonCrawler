@@ -144,10 +144,17 @@ FUNCTION Move_Player()
 			LOOP SOUND 1
 		ENDIF
 	ENDIF
-	
+
 	IF isAttackingEnemy = 1 AND isPlayerMoving = 0
 		Click_To_Attack()
-		//triggerAttackAnim = 1
+	ENDIF
+	
+	Rem if attack flags get stuck	
+	IF triggerAttackAnim = 1 AND isAttackAnim = 1 AND isAttackingEnemy = 1
+		Rem TODO: add timer before reset
+		triggerAttackAnim = 0
+		isAttackAnim      = 0
+		isAttackingEnemy  = 0
 	ENDIF
 ENDFUNCTION
 
@@ -178,14 +185,6 @@ FUNCTION Attack_Animation()
 		IF OBJECT FRAME(playerId#) > 65 AND OBJECT FRAME(playerId#) < 65.5 AND isHitSfx = 0
 			PLAY SOUND 3
 			isHitSfx = 1
-		ENDIF
-		
-		IF OBJECT PLAYING(playerId#) = 0
-			isHitSfx          = 0
-			isAttackAnim      = 0
-			triggerAttackAnim = 0
-			isAttackingEnemy  = 0
-			STOP OBJECT playerId#
 		ENDIF
  		
 	ENDIF
