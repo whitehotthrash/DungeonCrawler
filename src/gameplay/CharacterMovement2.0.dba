@@ -1,0 +1,193 @@
+Rem Player Character Movement and Attack Logic
+
+GLOBAL playerPositionX#, playerPositionY#, playerPositionZ#             // player position variables
+GLOBAL isPlayerMoving, playerMovementSpeed#                             // movement variables
+GLOBAL isChasingEnemy, isAttackingEnemy, attackRadius#                  // attack variables
+GLOBAL isWalkAnim, isAttackAnim, isHitSfx                               // animation flags
+GLOBAL triggerAttackAnim
+
+FUNCTION Init_Player_Interaction()
+	Rem player position variables
+	playerPositionX#        = OBJECT POSITION X(1)
+	playerPositionY#        = OBJECT POSITION Y(1)
+	playerPositionZ#        = OBJECT POSITION Z(1)
+	
+	Rem movement variables
+	isPlayerMoving          = 0
+	playerMovementSpeed#    = 0.025
+	isWalkAnim              = 0
+	
+	Rem attack variables
+	isChasingEnemy          = 0
+	isAttackingEnemy        = 0
+	isAttackAnim            = 0
+	attackRadius#           = 1.5
+	triggerAttackAnim       = 0
+	
+ENDFUNCTION
+
+FUNCTION Click_Floor()
+	Rem detect left click 1
+	IF MOUSECLICK() = 1
+		Rem if clicking on enemy object then let Attack_Object handle logic
+		interactableObj# = PICK OBJECT(MOUSEX(), MOUSEY(), 3, 5)
+		IF interactableObj# = enemyId#
+			isChasingEnemy = 1
+			isAttackingEnemy = 0
+			LOOP OBJECT 1, 30, 50
+			SET OBJECT SPEED playerId#, 31.5
+			Rem play walk animation
+// 	 		IF isWalkAnim = 0
+// 	 			isWalkAnim = 1
+// 	 			LOOP OBJECT playerId#, 30, 50
+// 	 			SET OBJECT SPEED playerId#, 31.5
+// 	 			LOOP SOUND 1
+// 	 		ENDIF
+			isPlayerMoving = 1
+		ELSE
+			Rem get nearest ray vector
+			PICK SCREEN MOUSEX(), MOUSEY(), 1
+			nearX# = CAMERA POSITION X(0) + GET PICK VECTOR X()
+			nearY# = CAMERA POSITION Y(0) + GET PICK VECTOR Y()
+			nearZ# = CAMERA POSITION Z(0) + GET PICK VECTOR Z()
+			
+			Rem get farthest ray vector
+			PICK SCREEN MOUSEX(), MOUSEY(), 1000
+			farX# = CAMERA POSITION X(0) + GET PICK VECTOR X()
+			farY# = CAMERA POSITION Y(0) + GET PICK VECTOR Y()
+			farZ# = CAMERA POSITION Z(0) + GET PICK VECTOR Z()
+			
+			Rem intersect ray with ground plane at y = 0
+			deltaY# = farY# - nearY#
+			IF deltaY# <> 0
+				t# = (0 - nearY#) / deltaY#
+				IF t# >= 0
+					playerPositionX#   = nearX# + (farX# - nearX#) * t#
+					playerPositionZ#   = nearZ# + (farZ# - nearZ#) * t#
+					isPlayerMoving   = 1
+
+					Rem cancel any existing chase after clicking floor again
+					isChasingEnemy   = 0
+					isAttackingEnemy = 0
+				ENDIF
+			ENDIF
+		ENDIF
+		
+		Rem play walk animation
+// 		IF isWalkAnim = 0
+// 			isWalkAnim = 1
+// 			LOOP OBJECT playerId#, 30, 50
+// 			SET OBJECT SPEED playerId#, 31.5
+// 			LOOP SOUND 1
+// 		ENDIF
+		
+		Rem make model turn to face intersected ray
+		POINT OBJECT 1, playerPositionX#, playerPositionY#, playerPositionZ#
+
+	ENDIF
+ENDFUNCTION
+
+FUNCTION Move_Player()
+	Rem move player from point a to enemy or point b
+	IF isPlayerMoving = 1
+		currentPlayerX# = OBJECT POSITION X(playerId#)
+		currentPlayerZ# = OBJECT POSITION Z(playerId#)
+		IF isChasingEnemy = 1
+			targetX# = OBJECT POSITION X(enemyId#)
+			targetZ# = OBJECT POSITION Z(enemyId#)
+		ELSE
+			targetX# = playerPositionX#
+			targetZ# = playerPositionZ#
+		ENDIF
+		
+		Rem calculate distance to floor or enemy and point player at it
+		deltaX# = targetX# - currentPlayerX#
+		deltaZ# = targetZ# - currentPlayerZ#
+		distanceToTarget# = SQRT((deltaX# * deltaX#) + (deltaZ# * deltaZ#))
+		POINT OBJECT 1, targetX#, OBJECT POSITION Y(1), targetZ#
+
+		Rem stop walking if reached target
+		IF distanceToTarget# <= 1.0 AND isChasingEnemy = 0
+			isPlayerMoving   = 0
+			isWalkAnim       = 0
+			isAttackingEnemy = 0
+			LOOP OBJECT playerId#, 0, 24
+			SET OBJECT SPEED 1, 10
+			STOP SOUND 1
+			EXITFUNCTION
+		ENDIF
+		
+		Rem stop moving if within attack radius
+		IF distanceToTarget# <= attackRadius# AND isChasingEnemy = 1
+			isPlayerMoving   = 0
+			isWalkAnim       = 0
+			isChasingEnemy   = 0
+			isAttackingEnemy = 1
+			LOOP OBJECT playerId#, 0, 24
+			SET OBJECT SPEED 1, 10
+			STOP SOUND 1
+			EXITFUNCTION
+		ENDIF
+		
+		Rem continue moving
+		normalizedX# = deltaX# / distanceToTarget#
+		normalizedZ# = deltaZ# / distanceToTarget#
+		newCharX# = currentPlayerX# + normalizedX# * playerMovementSpeed#
+		newCharZ# = currentPlayerZ# + normalizedZ# * playerMovementSpeed#
+		POSITION OBJECT playerId#, newCharX#, playerPositionY#, newCharZ#
+		
+		Rem play walk animation if not already playing
+		IF isWalkAnim = 0
+			isWalkAnim = 1
+			LOOP OBJECT playerId#, 30, 50
+			SET OBJECT SPEED playerId#, 31.5
+			LOOP SOUND 1
+		ENDIF
+	ENDIF
+	
+	IF isAttackingEnemy = 1 AND isPlayerMoving = 0
+		Click_To_Attack()
+		//triggerAttackAnim = 1
+	ENDIF
+ENDFUNCTION
+
+FUNCTION Attack_Object()
+	Rem detect left click 1
+	interactableObj# = PICK OBJECT(MOUSEX(), MOUSEY(), 3, 5)
+	
+	IF MOUSECLICK() = 1 AND interactableObj# = enemyId#
+
+			isChasingEnemy   = 1
+			isPlayerMoving   = 1
+
+	ENDIF
+	
+ENDFUNCTION
+
+FUNCTION Attack_Animation()
+	
+	Rem play hit sfx while attacking enemy
+	IF triggerAttackAnim = 1
+	
+ 		IF isAttackAnim = 0
+ 			isAttackAnim = 1
+			PLAY OBJECT playerId#, 62, 75
+			SET OBJECT SPEED playerId#, 45
+ 		ENDIF
+		
+		IF OBJECT FRAME(playerId#) > 65 AND OBJECT FRAME(playerId#) < 65.5 AND isHitSfx = 0
+			PLAY SOUND 3
+			isHitSfx = 1
+		ENDIF
+		
+		IF OBJECT PLAYING(playerId#) = 0
+			isHitSfx          = 0
+			isAttackAnim      = 0
+			triggerAttackAnim = 0
+			isAttackingEnemy  = 0
+			STOP OBJECT playerId#
+		ENDIF
+ 		
+	ENDIF
+
+ENDFUNCTION

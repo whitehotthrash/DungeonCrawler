@@ -20,7 +20,6 @@ DO
 	Camera_Update()
 	On_Hover()
 	Enemy_AI_Update()
-	Click_To_Attack()
 	//Combat_Loop()
 	
     
@@ -28,9 +27,17 @@ DO
 //	fps$="fps: " + STR$(SCREEN FPS())
 //	TEXT SCREEN WIDTH()-20-TEXT WIDTH(fps$),SCREEN HEIGHT()-40, fps$
 
+// 	PRINT "Is player moving? ", isPlayerMoving
+// 	PRINT "Is walk animation playing? ", isWalkAnim
+// 	PRINT "Is player chasing? ", isChasingEnemy
+// 	PRINT "Is player attacking? ", isAttackingEnemy
+	PRINT "Attack anim triggered? ", triggerAttackAnim
+	PRINT "Is attack animation playing? ", isAttackAnim
+	PRINT "current time timer ", currentTime
 
-//	objFra$=STR$(OBJECT FRAME(1))
-//	TEXT SCREEN WIDTH()-20-TEXT WIDTH(objFra$),SCREEN HEIGHT()-40, objFra$
+
+	objFra$=STR$(OBJECT FRAME(1))
+	TEXT SCREEN WIDTH()-20-TEXT WIDTH(objFra$),SCREEN HEIGHT()-40, objFra$
     
    SYNC
 LOOP

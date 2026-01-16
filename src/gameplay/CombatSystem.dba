@@ -2,7 +2,7 @@ Rem This governs dice rolls, hit and damage effects
 
 GLOBAL playerHealth#, enemyHealth#, isPlayerKilled, isEnemyKilled 
 GLOBAL hasAttacked, hasHit, lastMouseClick, lastAttackTime
-GLOBAL rollResult#, damage#, attackCooldown#
+GLOBAL rollResult#, damage#, attackCooldown#, currentTime
 
 FUNCTION Init_HP()
 	playerHealth#     = 10
@@ -29,10 +29,11 @@ FUNCTION Take_Damage(entityId#)
 	ENDIF
 		
 	IF entityId# = enemyId#
-		enemyHealth# = enemyHealth# - 0.1
+		enemyHealth# = enemyHealth# - 10
 		IF enemyHealth# < 0
 			enemyHealth# = 0
 			isEnemyKilled = 1
+			PLAY OBJECT enemyId#, 75, 100
 			PRINT "WIN"
 		ENDIF
 	ENDIF
@@ -41,7 +42,8 @@ ENDFUNCTION
 FUNCTION Click_To_Attack()
 
 		currentTime = TIMER()
-		
+		triggerAttackAnim = 1
+
 		IF MOUSECLICK() = 1 AND lastMouseClick = 0
 		
 			IF currentTime - lastAttackTime >= attackCooldown#
@@ -60,11 +62,11 @@ FUNCTION Click_To_Attack()
 				ELSE
 					hasHit = 0
 				ENDIF
+
 			ENDIF
+
 		ENDIF
 			
 		lastMouseClick = MOUSECLICK()
-		
-	PRINT hasAttacked,", ", hasHit,", ", rollResult#,", ", enemyHealth#
 	
 ENDFUNCTION

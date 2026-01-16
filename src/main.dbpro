@@ -17,6 +17,7 @@ include9=ui\UI_PlayerInterface.dba
 include10=gameplay\CombatSystem.dba
 include11=gameplay\MovementLoopManager.dba
 include12=gameplay\CombatLoopManager.dba
+include13=gameplay\CharacterMovement2.0.dba
 final source=_Temp.dbsource
 
 ; **** Executable Information  ***

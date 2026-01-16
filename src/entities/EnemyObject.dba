@@ -8,6 +8,7 @@ FUNCTION Init_Enemy_Object()
 	LOAD OBJECT "assets\enemyAnimations\L-Thug-Idle.x", enemyId#
 	APPEND OBJECT "assets\enemyAnimations\L-Thug-Move.x", enemyId#, 25
 	APPEND OBJECT "assets\enemyAnimations\L-Thug-Attack1.x", enemyId#, 50
+	APPEND OBJECT "assets\enemyAnimations\L-Thug-Die.x", enemyId#, 75
 	LOOP OBJECT enemyId#, 0, 25
 	YROTATE OBJECT enemyId#, 180
 	FIX OBJECT PIVOT enemyId#

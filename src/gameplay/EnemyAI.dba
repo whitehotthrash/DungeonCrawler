@@ -68,9 +68,7 @@ FUNCTION Enemy_AI_Update()
 				isEnemyMoving = 0
 				LOOP OBJECT enemyId#, 0, 25
 			ENDIF
-			
-			
-			
+		
 			Rem enemy is attacking
 			LOOP OBJECT enemyId#, 50, 75
 			SET OBJECT SPEED enemyId#, 30
@@ -89,6 +87,7 @@ FUNCTION Enemy_AI_Update()
 			isEnemyChasing   = 0
 			isEnemyIdle      = 0
 			isEnemyAttacking = 1
+			
 		ENDIF
 		
 	ELSE
@@ -107,5 +106,18 @@ FUNCTION Enemy_AI_Update()
 		isEnemyIdle    = 0
 		
 	ENDIF
+	
+// 	IF enemyHealth# <= 0
+// 		enemyHealth#     = 0
+// 		isEnemyChasing   = 0
+// 		isEnemyMoving    = 0
+// 		isEnemyIdle      = 0
+// 		isEnemyAttacking = 0
+// 		isEnemyKilled    = 1
+// 		STOP OBJECT enemyId#
+// 		STOP SOUND 2
+// 		PLAY OBJECT enemyId#, 75, 100
+// 		PRINT "WIN"
+// 	ENDIF
 
 ENDFUNCTION
