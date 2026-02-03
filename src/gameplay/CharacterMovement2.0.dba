@@ -152,9 +152,17 @@ FUNCTION Move_Player()
 	Rem if attack flags get stuck	
 	IF triggerAttackAnim = 1 AND isAttackAnim = 1 AND isAttackingEnemy = 1
 		Rem TODO: add timer before reset
-		triggerAttackAnim = 0
-		isAttackAnim      = 0
-		isAttackingEnemy  = 0
+		currentTime = TIMER()
+		IF currentTime - lastAttackTime >= attackCooldown#
+		
+			lastAttackTime = currentTime
+			
+			triggerAttackAnim = 0
+			isAttackAnim      = 0
+			isAttackingEnemy  = 0
+			
+			
+		ENDIF
 	ENDIF
 ENDFUNCTION
 
@@ -175,7 +183,8 @@ FUNCTION Attack_Animation()
 	
 	Rem play hit sfx while attacking enemy
 	IF triggerAttackAnim = 1
-	
+		isHitSfx = 0
+		
  		IF isAttackAnim = 0
  			isAttackAnim = 1
 			PLAY OBJECT playerId#, 62, 75

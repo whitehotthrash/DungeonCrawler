@@ -16,7 +16,7 @@ FUNCTION Init_HP()
 	lastAttackTime    = 0
 	rollResult#       = 0
 	damage#           = 4
-	attackCooldown#   = 600
+	attackCooldown#   = 800
 	attackInputLocked = 0
 ENDFUNCTION
 
@@ -43,14 +43,14 @@ ENDFUNCTION
 
 FUNCTION Click_To_Attack()
 
-		currentTime = TIMER()
+		//currentTime = TIMER()
 		triggerAttackAnim = 1
 
 		IF MOUSECLICK() = 1 AND lastMouseClick = 0
 		
-			IF currentTime - lastAttackTime >= attackCooldown#
+			//IF currentTime - lastAttackTime >= attackCooldown#
 				
-				lastAttackTime = currentTime
+				//lastAttackTime = currentTime
 				
 				rollOne# = RND(5) + 1
 				rollTwo# = RND(5) + 1
@@ -65,7 +65,7 @@ FUNCTION Click_To_Attack()
 					hasHit = 0
 				ENDIF
 
-			ENDIF
+			//ENDIF
 
 		ENDIF
 			
