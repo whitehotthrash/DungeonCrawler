@@ -10,10 +10,9 @@
 
 <p>This game is developed entirely on native Windows XP</p>
 
-<p>Find the project's current progress here:
-github.com/users/whitehotthrash/projects/1/views/1
-<p>
+Find the project's current progress [here](github.com/users/whitehotthrash/projects/1/views/1)
 
+Join the [discussion](https://github.com/whitehotthrash/DungeonCrawler/discussions)
 
 #### Tools
 - DarkBASIC Professional Editor, build Oct 2 2008, by John Youren, The Game Creators
@@ -26,7 +25,8 @@ github.com/users/whitehotthrash/projects/1/views/1
 
 ### Prerequisites to Running
 Windows versions XP, Vista, 7, 8, 8.1, 10, 11  
-- only tested in XP and 10 currently
+The exe has only been tested in XP and 10 currently.  
+Full testing will commence when alpha is released.  
 
 ### To Run
 Download entire codebase and run the Legacy Of Fire And Shadow executable
@@ -39,3 +39,4 @@ Download entire codebase and run the Legacy Of Fire And Shadow executable
 - On the floor, make player move to clicked spot  
 - On enemy, make player chase enemy  
 - On enemy within attack radius, attack once  
+
