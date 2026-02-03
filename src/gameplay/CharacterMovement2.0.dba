@@ -1,25 +1,34 @@
 Rem Player Character Movement and Attack Logic
+Rem State Machine: IDLE (default) -> MOVING -> IDLE or ATTACKING -> IDLE
 
-GLOBAL playerPositionX#, playerPositionY#, playerPositionZ#             // player position variables
-GLOBAL isPlayerMoving, playerMovementSpeed#                             // movement variables
-GLOBAL isChasingEnemy, isAttackingEnemy, attackRadius#                  // attack variables
-GLOBAL isWalkAnim, isAttackAnim, isHitSfx                               // animation flags
+Rem State Constants
+CONST STATE_IDLE = 0
+CONST STATE_MOVING = 1
+CONST STATE_ATTACKING = 2
+
+Rem State Management
+GLOBAL playerState                                                    // current player state (IDLE, MOVING, ATTACKING)
+GLOBAL playerPositionX#, playerPositionY#, playerPositionZ#          // player position variables
+GLOBAL playerMovementSpeed#                                          // movement speed
+GLOBAL isChasingEnemy, attackRadius#                                 // attack variables
+GLOBAL isWalkAnim, isAttackAnim, isHitSfx                            // animation flags
 GLOBAL triggerAttackAnim, lastAttackTime, attackCooldown#, lastMouseClickState
 
 FUNCTION Init_Player_Interaction()
+	Rem initialize state to IDLE (default)
+	playerState = STATE_IDLE
+	
 	Rem player position variables
 	playerPositionX#        = OBJECT POSITION X(1)
 	playerPositionY#        = OBJECT POSITION Y(1)
 	playerPositionZ#        = OBJECT POSITION Z(1)
 	
 	Rem movement variables
-	isPlayerMoving          = 0
 	playerMovementSpeed#    = 0.025
 	isWalkAnim              = 0
 	
 	Rem attack variables
 	isChasingEnemy          = 0
-	isAttackingEnemy        = 0
 	isAttackAnim            = 0
 	attackRadius#           = 1.5
 	triggerAttackAnim       = 0
@@ -27,7 +36,160 @@ FUNCTION Init_Player_Interaction()
 	attackCooldown#         = 600
 	lastMouseClickState     = 0
 	
+	Rem set initial idle animation
+	LOOP OBJECT playerId#, 0, 24
+	SET OBJECT SPEED playerId#, 10
+	
 ENDFUNCTION
+
+Rem ============================================
+Rem STATE TRANSITION FUNCTIONS
+Rem ============================================
+
+FUNCTION Transition_To_Idle()
+	Rem cleanup any active states and return to idle
+	IF playerState = STATE_MOVING
+		Cleanup_Moving_State()
+	ENDIF
+	IF playerState = STATE_ATTACKING
+		Cleanup_Attacking_State()
+	ENDIF
+	
+	playerState = STATE_IDLE
+	LOOP OBJECT playerId#, 0, 24
+	SET OBJECT SPEED playerId#, 10
+ENDFUNCTION
+
+FUNCTION Transition_To_Moving(targetX#, targetZ#, isChasingTarget)
+	Rem transition from IDLE or ATTACKING to MOVING
+	IF playerState = STATE_ATTACKING
+		Cleanup_Attacking_State()
+	ENDIF
+	
+	playerState = STATE_MOVING
+	playerPositionX# = targetX#
+	playerPositionZ# = targetZ#
+	isChasingEnemy = isChasingTarget
+	
+	Rem start walk animation
+	isWalkAnim = 1
+	STOP OBJECT playerId#
+	LOOP OBJECT playerId#, 30, 50
+	SET OBJECT SPEED playerId#, 31.5
+	LOOP SOUND 1
+	
+	Rem point player at target
+	POINT OBJECT playerId#, targetX#, OBJECT POSITION Y(playerId#), targetZ#
+ENDFUNCTION
+
+FUNCTION Transition_To_Attacking()
+	Rem transition from IDLE or MOVING to ATTACKING
+	IF playerState = STATE_MOVING
+		Cleanup_Moving_State()
+	ENDIF
+	
+	playerState = STATE_ATTACKING
+	isChasingEnemy = 0
+	triggerAttackAnim = 1
+	
+	Rem point player at enemy
+	enemyX# = OBJECT POSITION X(enemyId#)
+	enemyZ# = OBJECT POSITION Z(enemyId#)
+	POINT OBJECT playerId#, enemyX#, OBJECT POSITION Y(playerId#), enemyZ#
+	
+	Rem roll dice and calculate damage
+	currentTime = TIMER()
+	lastAttackTime = currentTime
+	rollOne# = RND(5) + 1
+	rollTwo# = RND(5) + 1
+	rollResult# = rollOne# + rollTwo#
+	hasAttacked = 1
+	IF rollResult# > 6
+		hasHit = 1
+		Take_Damage(enemyId#)
+	ELSE
+		hasHit = 0
+	ENDIF
+ENDFUNCTION
+
+Rem ============================================
+Rem STATE CLEANUP FUNCTIONS
+Rem ============================================
+
+FUNCTION Cleanup_Moving_State()
+	Rem stop movement animations and sounds
+	isWalkAnim = 0
+	STOP OBJECT playerId#
+	STOP SOUND 1
+ENDFUNCTION
+
+FUNCTION Cleanup_Attacking_State()
+	Rem reset attack flags
+	triggerAttackAnim = 0
+	isAttackAnim = 0
+	isHitSfx = 0
+	STOP OBJECT playerId#
+ENDFUNCTION
+
+Rem ============================================
+Rem STATE UPDATE FUNCTIONS
+Rem ============================================
+
+FUNCTION Update_Idle_State()
+	Rem idle state - wait for input
+	Rem nothing to update, just maintain idle animation
+ENDFUNCTION
+
+FUNCTION Update_Moving_State()
+	Rem update movement logic
+	currentPlayerX# = OBJECT POSITION X(playerId#)
+	currentPlayerZ# = OBJECT POSITION Z(playerId#)
+	
+	Rem determine target
+	IF isChasingEnemy = 1
+		targetX# = OBJECT POSITION X(enemyId#)
+		targetZ# = OBJECT POSITION Z(enemyId#)
+	ELSE
+		targetX# = playerPositionX#
+		targetZ# = playerPositionZ#
+	ENDIF
+	
+	Rem calculate distance and direction
+	deltaX# = targetX# - currentPlayerX#
+	deltaZ# = targetZ# - currentPlayerZ#
+	distanceToTarget# = SQRT((deltaX# * deltaX#) + (deltaZ# * deltaZ#))
+	POINT OBJECT playerId#, targetX#, OBJECT POSITION Y(playerId#), targetZ#
+	
+	Rem check if reached floor target
+	IF distanceToTarget# <= 1.0 AND isChasingEnemy = 0
+		Transition_To_Idle()
+		EXITFUNCTION
+	ENDIF
+	
+	Rem check if reached enemy (transition to attack)
+	IF distanceToTarget# <= attackRadius# AND isChasingEnemy = 1
+		Transition_To_Attacking()
+		EXITFUNCTION
+	ENDIF
+	
+	Rem continue moving
+	normalizedX# = deltaX# / distanceToTarget#
+	normalizedZ# = deltaZ# / distanceToTarget#
+	newCharX# = currentPlayerX# + normalizedX# * playerMovementSpeed#
+	newCharZ# = currentPlayerZ# + normalizedZ# * playerMovementSpeed#
+	POSITION OBJECT playerId#, newCharX#, playerPositionY#, newCharZ#
+ENDFUNCTION
+
+FUNCTION Update_Attacking_State()
+	Rem handle attack input when not animating
+	IF isAttackAnim = 0
+		Click_To_Attack()
+	ENDIF
+ENDFUNCTION
+
+Rem ============================================
+Rem INPUT HANDLING
+Rem ============================================
 
 FUNCTION Click_Floor()
 	Rem detect left click 1 (only on click down, not held)
@@ -44,34 +206,20 @@ FUNCTION Click_Floor()
 			deltaZ# = enemyZ# - currentPlayerZ#
 			distanceToEnemy# = SQRT((deltaX# * deltaX#) + (deltaZ# * deltaZ#))
 			
-			Rem if in range and cooldown passed, trigger attack directly
+			Rem if in range and cooldown passed, transition to attack
 			IF distanceToEnemy# <= attackRadius# AND (TIMER() - lastAttackTime >= attackCooldown# OR lastAttackTime = 0)
-				Rem stop any movement and enter attack state
-				isPlayerMoving    = 0
-				isChasingEnemy    = 0
-				isAttackingEnemy  = 1
-				Rem stop walk animation and sound
-				isWalkAnim        = 0
-				STOP OBJECT playerId#
-				STOP SOUND 1
-				Rem Click_To_Attack() will be called from Move_Player() to handle dice roll and trigger animation
+				Transition_To_Attacking()
 			ELSE
-				Rem not in range or cooldown active, chase enemy
-				isChasingEnemy = 1
-				isAttackingEnemy = 0
-				STOP OBJECT playerId#
-				LOOP OBJECT playerId#, 30, 50
-				SET OBJECT SPEED playerId#, 31.5
-				isPlayerMoving = 1
+				Rem not in range or cooldown active, transition to moving (chase)
+				Transition_To_Moving(enemyX#, enemyZ#, 1)
 			ENDIF
 		ELSE
-			Rem get nearest ray vector
+			Rem clicking on floor - calculate intersection point
 			PICK SCREEN MOUSEX(), MOUSEY(), 1
 			nearX# = CAMERA POSITION X(0) + GET PICK VECTOR X()
 			nearY# = CAMERA POSITION Y(0) + GET PICK VECTOR Y()
 			nearZ# = CAMERA POSITION Z(0) + GET PICK VECTOR Z()
 			
-			Rem get farthest ray vector
 			PICK SCREEN MOUSEX(), MOUSEY(), 1000
 			farX# = CAMERA POSITION X(0) + GET PICK VECTOR X()
 			farY# = CAMERA POSITION Y(0) + GET PICK VECTOR Y()
@@ -82,28 +230,13 @@ FUNCTION Click_Floor()
 			IF deltaY# <> 0
 				t# = (0 - nearY#) / deltaY#
 				IF t# >= 0
-					playerPositionX#   = nearX# + (farX# - nearX#) * t#
-					playerPositionZ#   = nearZ# + (farZ# - nearZ#) * t#
-					isPlayerMoving   = 1
-
-					Rem cancel any existing chase after clicking floor again
-					isChasingEnemy   = 0
-					isAttackingEnemy = 0
+					targetX# = nearX# + (farX# - nearX#) * t#
+					targetZ# = nearZ# + (farZ# - nearZ#) * t#
+					Rem transition to moving (walk to floor)
+					Transition_To_Moving(targetX#, targetZ#, 0)
 				ENDIF
 			ENDIF
 		ENDIF
-		
-		Rem play walk animation
-// 		IF isWalkAnim = 0
-// 			isWalkAnim = 1
-// 			LOOP OBJECT playerId#, 30, 50
-// 			SET OBJECT SPEED playerId#, 31.5
-// 			LOOP SOUND 1
-// 		ENDIF
-		
-		Rem make model turn to face intersected ray
-		POINT OBJECT 1, playerPositionX#, playerPositionY#, playerPositionZ#
-
 	ENDIF
 	
 	Rem track mouse click state for edge detection
@@ -111,94 +244,25 @@ FUNCTION Click_Floor()
 ENDFUNCTION
 
 FUNCTION Move_Player()
-	Rem handle attack input when in attack state (but not during animation)
-	IF isAttackingEnemy = 1 AND isPlayerMoving = 0 AND isAttackAnim = 0
-		Click_To_Attack()
-		EXITFUNCTION
-	ENDIF
-	
-	Rem if currently attacking, don't process movement
-	IF isAttackingEnemy = 1
-		EXITFUNCTION
-	ENDIF
-	Rem move player from point a to enemy or point b
-	IF isPlayerMoving = 1
-		currentPlayerX# = OBJECT POSITION X(playerId#)
-		currentPlayerZ# = OBJECT POSITION Z(playerId#)
-		IF isChasingEnemy = 1
-			targetX# = OBJECT POSITION X(enemyId#)
-			targetZ# = OBJECT POSITION Z(enemyId#)
-		ELSE
-			targetX# = playerPositionX#
-			targetZ# = playerPositionZ#
-		ENDIF
-		
-		Rem calculate distance to floor or enemy and point player at it
-		deltaX# = targetX# - currentPlayerX#
-		deltaZ# = targetZ# - currentPlayerZ#
-		distanceToTarget# = SQRT((deltaX# * deltaX#) + (deltaZ# * deltaZ#))
-		POINT OBJECT 1, targetX#, OBJECT POSITION Y(1), targetZ#
-
-		Rem stop walking if reached target
-		IF distanceToTarget# <= 1.0 AND isChasingEnemy = 0
-			isPlayerMoving   = 0
-			isWalkAnim       = 0
-			//isAttackingEnemy = 0 //new
-			STOP OBJECT playerId# //new
-			LOOP OBJECT playerId#, 0, 24
-			SET OBJECT SPEED 1, 10
-			STOP SOUND 1
-			EXITFUNCTION
-		ENDIF
-		
-		Rem stop moving if within attack radius
-		IF distanceToTarget# <= attackRadius# AND isChasingEnemy = 1
-			isPlayerMoving    = 0
-			isWalkAnim        = 0
-			isChasingEnemy    = 0
-			isAttackingEnemy  = 1
-			triggerAttackAnim = 1
-			lastAttackTime    = TIMER()
-			Rem stop walk animation and sound
-			STOP OBJECT playerId#
-			STOP SOUND 1
-			EXITFUNCTION
-		ENDIF
-		
-		Rem continue moving
-		normalizedX# = deltaX# / distanceToTarget#
-		normalizedZ# = deltaZ# / distanceToTarget#
-		newCharX# = currentPlayerX# + normalizedX# * playerMovementSpeed#
-		newCharZ# = currentPlayerZ# + normalizedZ# * playerMovementSpeed#
-		POSITION OBJECT playerId#, newCharX#, playerPositionY#, newCharZ#
-		
-		Rem play walk animation if not already playing
-		IF isWalkAnim = 0 AND isAttackingEnemy = 0
-			isWalkAnim = 1
-			STOP OBJECT playerId#
-			LOOP OBJECT playerId#, 30, 50
-			SET OBJECT SPEED playerId#, 31.5
-			LOOP SOUND 1
-		ENDIF
+	Rem main state machine update - route to appropriate state handler
+	IF playerState = STATE_IDLE
+		Update_Idle_State()
+	ELSE IF playerState = STATE_MOVING
+		Update_Moving_State()
+	ELSE IF playerState = STATE_ATTACKING
+		Update_Attacking_State()
 	ENDIF
 ENDFUNCTION
 
 FUNCTION Attack_Object()
-	Rem detect left click 1
-	interactableObj# = PICK OBJECT(MOUSEX(), MOUSEY(), 3, 5)
-	
-	IF MOUSECLICK() = 1 AND interactableObj# = enemyId#
-
-			isChasingEnemy   = 1
-			isPlayerMoving   = 1
-
-	ENDIF
-	
+	Rem legacy function - now handled by Click_Floor() state machine
+	Rem kept for compatibility but no longer needed
 ENDFUNCTION
 
 FUNCTION Attack_Animation()
 	Rem play attack animation and handle completion
-	IF triggerAttackAnim = 1
+	Rem only process if in attacking state
+	IF playerState = STATE_ATTACKING AND triggerAttackAnim = 1
 		Rem start attack animation if not already playing
 		IF isAttackAnim = 0
 			STOP OBJECT playerId#
@@ -218,14 +282,8 @@ FUNCTION Attack_Animation()
 		
 		Rem check if attack animation completed (frame 75 is end of attack anim)
 		IF OBJECT FRAME(playerId#) >= 75 OR OBJECT PLAYING(playerId#) = 0
-			Rem reset all attack flags and return to idle
-			triggerAttackAnim = 0
-			isAttackAnim      = 0
-			isAttackingEnemy  = 0
-			isHitSfx          = 0
-			STOP OBJECT playerId#
-			LOOP OBJECT playerId#, 0, 24
-			SET OBJECT SPEED playerId#, 10
+			Rem transition back to idle state
+			Transition_To_Idle()
 		ENDIF
 	ENDIF
 ENDFUNCTION
