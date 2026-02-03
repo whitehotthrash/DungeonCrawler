@@ -36,7 +36,7 @@ FUNCTION Take_Damage(entityId#)
 			enemyHealth# = 0
 			isEnemyKilled = 1
 			PLAY OBJECT enemyId#, 75, 100
-			PRINT "WIN"
+			//PRINT "WIN"
 		ENDIF
 	ENDIF
 ENDFUNCTION

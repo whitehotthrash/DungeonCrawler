@@ -3,6 +3,6 @@ Rem Aggregator module for player movement
 FUNCTION Update_Player_Movement()
 	Click_Floor()
 	Move_Player()
-	Attack_Object()
+	//Attack_Object()
 	Attack_Animation()
 ENDFUNCTION

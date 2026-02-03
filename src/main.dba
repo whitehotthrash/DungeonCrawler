@@ -28,20 +28,20 @@ DO
 //	TEXT SCREEN WIDTH()-20-TEXT WIDTH(fps$),SCREEN HEIGHT()-40, fps$
 
 	Rem Debug output - state machine
-	IF playerState = STATE_IDLE
-		PRINT "Player State: IDLE"
-	ENDIF
-	
-	IF playerState = STATE_MOVING
-		PRINT "Player State: MOVING"
-	ENDIF
-	
-	IF playerState = STATE_ATTACKING
-		PRINT "Player State: ATTACKING"
-	ENDIF
-	PRINT "Attack anim triggered? ", triggerAttackAnim
-	PRINT "Is attack animation playing? ", isAttackAnim
-	PRINT "Is chasing enemy? ", isChasingEnemy
+// 	IF playerState = STATE_IDLE
+// 		PRINT "Player State: IDLE"
+// 	ENDIF
+// 	
+// 	IF playerState = STATE_MOVING
+// 		PRINT "Player State: MOVING"
+// 	ENDIF
+// 	
+// 	IF playerState = STATE_ATTACKING
+// 		PRINT "Player State: ATTACKING"
+// 	ENDIF
+// 	PRINT "Attack anim triggered? ", triggerAttackAnim
+// 	PRINT "Is attack animation playing? ", isAttackAnim
+// 	PRINT "Is chasing enemy? ", isChasingEnemy
 
 
 	objFra$=STR$(OBJECT FRAME(1))
