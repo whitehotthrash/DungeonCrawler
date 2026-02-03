@@ -20,7 +20,6 @@ DO
 	Camera_Update()
 	On_Hover()
 	Enemy_AI_Update()
-	//Combat_Loop()
 	
     
     Rem Logging        

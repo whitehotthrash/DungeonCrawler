@@ -10,7 +10,7 @@ GLOBAL playerState                                                   // current 
 GLOBAL playerPositionX#, playerPositionY#, playerPositionZ#          // player position variables
 GLOBAL playerMovementSpeed#                                          // movement speed
 GLOBAL isChasingEnemy, attackRadius#                                 // attack variables
-GLOBAL isWalkAnim, isAttackAnim, isHitSfx                            // animation and sfx flags
+GLOBAL isWalkAnim, isAttackAnim, isHitSfx                            // animation flags
 GLOBAL triggerAttackAnim, lastAttackTime, attackCooldown#, lastMouseClickState
 
 FUNCTION Init_Player_Interaction()
@@ -263,7 +263,6 @@ ENDFUNCTION
 
 FUNCTION Move_Player()
 	Rem main state machine update - route to appropriate state handler
-	Rem use separate IF statements
 	IF playerState = STATE_IDLE
 		Update_Idle_State()
 	ENDIF
@@ -305,6 +304,7 @@ FUNCTION Attack_Animation()
 		
 		Rem check if attack animation completed
 		IF OBJECT FRAME(playerId#) >= 75 OR OBJECT PLAYING(playerId#) = 0
+			Rem transition back to idle state
 			Transition_To_Idle()
 		ENDIF
 	ENDIF

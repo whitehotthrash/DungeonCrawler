@@ -15,14 +15,14 @@ FUNCTION Init_HP()
 	lastMouseClick    = 0
 	lastAttackTime    = 0
 	rollResult#       = 0
-	damage#           = 4
+	damage#           = 3
 	attackCooldown#   = 800
 	attackInputLocked = 0
 ENDFUNCTION
 
 FUNCTION Take_Damage(entityId#)
 	IF entityId# = playerId#
-		playerHealth# = playerHealth# - 4
+		playerHealth# = playerHealth# - damage#
 		IF playerHealth# < 0
 			playerHealth# = 0
 			isPlayerKilled = 1
@@ -31,12 +31,12 @@ FUNCTION Take_Damage(entityId#)
 	ENDIF
 		
 	IF entityId# = enemyId#
-		enemyHealth# = enemyHealth# - 10
+		enemyHealth# = enemyHealth# - damage#
 		IF enemyHealth# < 0
 			enemyHealth# = 0
 			isEnemyKilled = 1
 			PLAY OBJECT enemyId#, 75, 100
-			//PRINT "WIN"
+			PRINT "WIN"
 		ENDIF
 	ENDIF
 ENDFUNCTION
