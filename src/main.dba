@@ -11,6 +11,7 @@ Camera_Init()
 //Init_Trees()
 Init_Enemy_Object()
 Init_Enemy_AI()
+Init_HP()
 
 SYNC ON : SYNC RATE 60
 Rem Main Loop
@@ -19,15 +20,32 @@ DO
 	Camera_Update()
 	On_Hover()
 	Enemy_AI_Update()
+	//Combat_Loop()
 	
     
     Rem Logging        
 //	fps$="fps: " + STR$(SCREEN FPS())
 //	TEXT SCREEN WIDTH()-20-TEXT WIDTH(fps$),SCREEN HEIGHT()-40, fps$
 
+	Rem Debug output - state machine
+// 	IF playerState = STATE_IDLE
+// 		PRINT "Player State: IDLE"
+// 	ENDIF
+// 	
+// 	IF playerState = STATE_MOVING
+// 		PRINT "Player State: MOVING"
+// 	ENDIF
+// 	
+// 	IF playerState = STATE_ATTACKING
+// 		PRINT "Player State: ATTACKING"
+// 	ENDIF
+// 	PRINT "Attack anim triggered? ", triggerAttackAnim
+// 	PRINT "Is attack animation playing? ", isAttackAnim
+// 	PRINT "Is chasing enemy? ", isChasingEnemy
 
-//	objFra$=STR$(OBJECT FRAME(1))
-//	TEXT SCREEN WIDTH()-20-TEXT WIDTH(objFra$),SCREEN HEIGHT()-40, objFra$
+
+	objFra$=STR$(OBJECT FRAME(1))
+	TEXT SCREEN WIDTH()-20-TEXT WIDTH(objFra$),SCREEN HEIGHT()-40, objFra$
     
    SYNC
 LOOP

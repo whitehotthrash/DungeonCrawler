@@ -1,10 +1,72 @@
 Rem This governs dice rolls, hit and damage effects
 
-GLOBAL playerHealth#, enemyHealth#
+GLOBAL playerHealth#, enemyHealth#, isPlayerKilled, isEnemyKilled 
+GLOBAL hasAttacked, hasHit, lastMouseClick, lastAttackTime
+GLOBAL rollResult#, damage#, attackCooldown#, currentTime
+GLOBAL attackInputLocked
 
 FUNCTION Init_HP()
-	playerHealth# = 10
-	enemyHealth#  = 10
+	playerHealth#     = 10
+	isPlayerKilled    = 0
+	enemyHealth#      = 10
+	isEnemyKilled     = 0
+	hasAttacked       = 0
+	hasHit            = 0
+	lastMouseClick    = 0
+	lastAttackTime    = 0
+	rollResult#       = 0
+	damage#           = 4
+	attackCooldown#   = 800
+	attackInputLocked = 0
 ENDFUNCTION
 
+FUNCTION Take_Damage(entityId#)
+	IF entityId# = playerId#
+		playerHealth# = playerHealth# - 4
+		IF playerHealth# < 0
+			playerHealth# = 0
+			isPlayerKilled = 1
+			PRINT "LOSE"
+		ENDIF
+	ENDIF
+		
+	IF entityId# = enemyId#
+		enemyHealth# = enemyHealth# - 10
+		IF enemyHealth# < 0
+			enemyHealth# = 0
+			isEnemyKilled = 1
+			PLAY OBJECT enemyId#, 75, 100
+			//PRINT "WIN"
+		ENDIF
+	ENDIF
+ENDFUNCTION
 
+FUNCTION Click_To_Attack()
+	Rem only trigger attack on click down (edge detection) and if cooldown passed
+	currentTime = TIMER()
+	
+	IF MOUSECLICK() = 1 AND lastMouseClick = 0
+		Rem check cooldown before allowing new attack
+		IF currentTime - lastAttackTime >= attackCooldown# OR lastAttackTime = 0
+			Rem trigger attack animation
+			triggerAttackAnim = 1
+			lastAttackTime = currentTime
+			
+			Rem roll dice for hit calculation
+			rollOne# = RND(5) + 1
+			rollTwo# = RND(5) + 1
+			rollResult# = rollOne# + rollTwo#
+			
+			hasAttacked = 1
+
+			IF rollResult# > 6
+				hasHit = 1
+				Take_Damage(enemyId#)
+			ELSE
+				hasHit = 0
+			ENDIF
+		ENDIF
+	ENDIF
+		
+	lastMouseClick = MOUSECLICK()
+ENDFUNCTION

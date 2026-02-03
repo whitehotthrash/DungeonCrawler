@@ -1,0 +1,6 @@
+Rem Aggregator module for combat system
+
+// FUNCTION Combat_Loop()
+// 	Take_Damage(entityId#)
+// 	Click_To_Attack()
+// ENDFUNCTION
