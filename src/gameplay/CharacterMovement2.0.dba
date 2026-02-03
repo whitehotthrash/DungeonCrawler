@@ -88,6 +88,9 @@ FUNCTION Click_Floor()
 ENDFUNCTION
 
 FUNCTION Move_Player()
+	IF isAttackingEnemy = 1
+		EXITFUNCTION
+	ENDIF
 	Rem move player from point a to enemy or point b
 	IF isPlayerMoving = 1
 		currentPlayerX# = OBJECT POSITION X(playerId#)
@@ -110,7 +113,7 @@ FUNCTION Move_Player()
 		IF distanceToTarget# <= 1.0 AND isChasingEnemy = 0
 			isPlayerMoving   = 0
 			isWalkAnim       = 0
-			isAttackingEnemy = 0
+			//isAttackingEnemy = 0 //new
 			LOOP OBJECT playerId#, 0, 24
 			SET OBJECT SPEED 1, 10
 			STOP SOUND 1
@@ -119,13 +122,15 @@ FUNCTION Move_Player()
 		
 		Rem stop moving if within attack radius
 		IF distanceToTarget# <= attackRadius# AND isChasingEnemy = 1
-			isPlayerMoving   = 0
-			isWalkAnim       = 0
-			isChasingEnemy   = 0
-			isAttackingEnemy = 1
-			LOOP OBJECT playerId#, 0, 24
-			SET OBJECT SPEED 1, 10
-			STOP SOUND 1
+			isPlayerMoving    = 0
+			//isWalkAnim       = 0 //new
+			isChasingEnemy    = 0
+			isAttackingEnemy  = 1
+			triggerAttackAnim = 1 //new
+			lastAttackTime    = TIMER()
+// 			LOOP OBJECT playerId#, 0, 24
+// 			SET OBJECT SPEED 1, 10
+// 			STOP SOUND 1
 			EXITFUNCTION
 		ENDIF
 		
@@ -137,7 +142,7 @@ FUNCTION Move_Player()
 		POSITION OBJECT playerId#, newCharX#, playerPositionY#, newCharZ#
 		
 		Rem play walk animation if not already playing
-		IF isWalkAnim = 0
+		IF isWalkAnim = 0 AND isAttackingEnemy = 0
 			isWalkAnim = 1
 			LOOP OBJECT playerId#, 30, 50
 			SET OBJECT SPEED playerId#, 31.5
@@ -152,14 +157,14 @@ FUNCTION Move_Player()
 	Rem if attack flags get stuck	
 	IF triggerAttackAnim = 1 AND isAttackAnim = 1 AND isAttackingEnemy = 1
 		Rem TODO: add timer before reset
-		currentTime = TIMER()
-		IF currentTime - lastAttackTime >= attackCooldown#
-		
-			lastAttackTime = currentTime
+		//currentTime = TIMER()
+		IF TIMER() - lastAttackTime < attackCooldown#
+			EXITFUNCTION
+			//lastAttackTime = currentTime
 			
-			triggerAttackAnim = 0
-			isAttackAnim      = 0
-			isAttackingEnemy  = 0
+			//triggerAttackAnim = 0 //new
+			//isAttackAnim      = 0 //new
+			//isAttackingEnemy  = 0 //new
 			
 			
 		ENDIF
@@ -183,17 +188,26 @@ FUNCTION Attack_Animation()
 	
 	Rem play hit sfx while attacking enemy
 	IF triggerAttackAnim = 1
-		isHitSfx = 0
+		//isHitSfx = 0 //new
 		
  		IF isAttackAnim = 0
  			isAttackAnim = 1
+ 			isHitSfx     = 0
+ 			isWalkAnim   = 0
+ 			//STOP SOUND   = 1
 			PLAY OBJECT playerId#, 62, 75
 			SET OBJECT SPEED playerId#, 45
  		ENDIF
 		
-		IF OBJECT FRAME(playerId#) > 65 AND OBJECT FRAME(playerId#) < 65.5 AND isHitSfx = 0
+		IF OBJECT FRAME(playerId#) >= 75 // AND OBJECT FRAME(playerId#) < 65.5 AND isHitSfx = 0
 			PLAY SOUND 3
+			triggerAttackAnim = 0 //new
+			isAttackAnim      = 0 //new
+			isAttackingEnemy  = 0 //new
 			isHitSfx = 1
+			lastAttackTime    = TIMER()
+			LOOP OBJECT playerId#, 0, 24
+			SET OBJECT SPEED playerId#, 10
 		ENDIF
  		
 	ENDIF
