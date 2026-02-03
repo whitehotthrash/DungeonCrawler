@@ -34,6 +34,7 @@ FUNCTION Click_Floor()
 		IF interactableObj# = enemyId#
 			isChasingEnemy = 1
 			isAttackingEnemy = 0
+			STOP OBJECT playerId# // new
 			LOOP OBJECT 1, 30, 50
 			SET OBJECT SPEED playerId#, 31.5
 			Rem play walk animation
@@ -114,6 +115,7 @@ FUNCTION Move_Player()
 			isPlayerMoving   = 0
 			isWalkAnim       = 0
 			//isAttackingEnemy = 0 //new
+			STOP OBJECT playerId# //new
 			LOOP OBJECT playerId#, 0, 24
 			SET OBJECT SPEED 1, 10
 			STOP SOUND 1
@@ -144,6 +146,7 @@ FUNCTION Move_Player()
 		Rem play walk animation if not already playing
 		IF isWalkAnim = 0 AND isAttackingEnemy = 0
 			isWalkAnim = 1
+			STOP OBJECT playerId#
 			LOOP OBJECT playerId#, 30, 50
 			SET OBJECT SPEED playerId#, 31.5
 			LOOP SOUND 1
@@ -155,20 +158,20 @@ FUNCTION Move_Player()
 	ENDIF
 	
 	Rem if attack flags get stuck	
-	IF triggerAttackAnim = 1 AND isAttackAnim = 1 AND isAttackingEnemy = 1
-		Rem TODO: add timer before reset
-		//currentTime = TIMER()
-		IF TIMER() - lastAttackTime < attackCooldown#
-			EXITFUNCTION
-			//lastAttackTime = currentTime
-			
-			//triggerAttackAnim = 0 //new
-			//isAttackAnim      = 0 //new
-			//isAttackingEnemy  = 0 //new
-			
-			
-		ENDIF
-	ENDIF
+// 	IF triggerAttackAnim = 1 AND isAttackAnim = 1 AND isAttackingEnemy = 1
+// 		Rem TODO: add timer before reset
+// 		//currentTime = TIMER()
+// 		IF TIMER() - lastAttackTime < attackCooldown#
+// 			EXITFUNCTION
+// 			//lastAttackTime = currentTime
+// 			
+// 			//triggerAttackAnim = 0 //new
+// 			//isAttackAnim      = 0 //new
+// 			//isAttackingEnemy  = 0 //new
+// 			
+// 			
+// 		ENDIF
+// 	ENDIF
 ENDFUNCTION
 
 FUNCTION Attack_Object()
@@ -191,6 +194,7 @@ FUNCTION Attack_Animation()
 		//isHitSfx = 0 //new
 		
  		IF isAttackAnim = 0
+ 			STOP OBJECT playerId# //new
  			isAttackAnim = 1
  			isHitSfx     = 0
  			isWalkAnim   = 0
@@ -199,13 +203,14 @@ FUNCTION Attack_Animation()
 			SET OBJECT SPEED playerId#, 45
  		ENDIF
 		
-		IF OBJECT FRAME(playerId#) >= 75 // AND OBJECT FRAME(playerId#) < 65.5 AND isHitSfx = 0
+		IF OBJECT FRAME(playerId#) >= 65 AND OBJECT FRAME(playerId#) < 65.5 AND isHitSfx = 0
 			PLAY SOUND 3
 			triggerAttackAnim = 0 //new
 			isAttackAnim      = 0 //new
 			isAttackingEnemy  = 0 //new
 			isHitSfx = 1
 			lastAttackTime    = TIMER()
+			STOP OBJECT playerId# //new
 			LOOP OBJECT playerId#, 0, 24
 			SET OBJECT SPEED playerId#, 10
 		ENDIF
