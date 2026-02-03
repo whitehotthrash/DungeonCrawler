@@ -2,9 +2,9 @@ Rem Player Character Movement and Attack Logic
 Rem State Machine: IDLE (default) -> MOVING -> IDLE or ATTACKING -> IDLE
 
 Rem State Constants
-CONST STATE_IDLE = 0
-CONST STATE_MOVING = 1
-CONST STATE_ATTACKING = 2
+#CONSTANT STATE_IDLE = 0
+#CONSTANT STATE_MOVING = 1
+#CONSTANT STATE_ATTACKING = 2
 
 Rem State Management
 GLOBAL playerState                                                    // current player state (IDLE, MOVING, ATTACKING)
@@ -145,39 +145,55 @@ FUNCTION Update_Moving_State()
 	currentPlayerX# = OBJECT POSITION X(playerId#)
 	currentPlayerZ# = OBJECT POSITION Z(playerId#)
 	
-	Rem determine target
+	Rem if chasing enemy, always target enemy's current position
 	IF isChasingEnemy = 1
 		targetX# = OBJECT POSITION X(enemyId#)
 		targetZ# = OBJECT POSITION Z(enemyId#)
+		
+		Rem calculate distance to enemy
+		deltaX# = targetX# - currentPlayerX#
+		deltaZ# = targetZ# - currentPlayerZ#
+		distanceToEnemy# = SQRT((deltaX# * deltaX#) + (deltaZ# * deltaZ#))
+		
+		Rem check if within attack radius - stop and transition to attack
+		IF distanceToEnemy# <= attackRadius#
+			Transition_To_Attacking()
+			EXITFUNCTION
+		ENDIF
+		
+		Rem point player at enemy and move towards it
+		POINT OBJECT playerId#, targetX#, OBJECT POSITION Y(playerId#), targetZ#
+		
+		Rem continue moving towards enemy (will stop at attack radius on next frame)
+		normalizedX# = deltaX# / distanceToEnemy#
+		normalizedZ# = deltaZ# / distanceToEnemy#
+		newCharX# = currentPlayerX# + normalizedX# * playerMovementSpeed#
+		newCharZ# = currentPlayerZ# + normalizedZ# * playerMovementSpeed#
+		POSITION OBJECT playerId#, newCharX#, playerPositionY#, newCharZ#
 	ELSE
+		Rem moving to floor target
 		targetX# = playerPositionX#
 		targetZ# = playerPositionZ#
+		
+		Rem calculate distance and direction
+		deltaX# = targetX# - currentPlayerX#
+		deltaZ# = targetZ# - currentPlayerZ#
+		distanceToTarget# = SQRT((deltaX# * deltaX#) + (deltaZ# * deltaZ#))
+		POINT OBJECT playerId#, targetX#, OBJECT POSITION Y(playerId#), targetZ#
+		
+		Rem check if reached floor target
+		IF distanceToTarget# <= 1.0
+			Transition_To_Idle()
+			EXITFUNCTION
+		ENDIF
+		
+		Rem continue moving
+		normalizedX# = deltaX# / distanceToTarget#
+		normalizedZ# = deltaZ# / distanceToTarget#
+		newCharX# = currentPlayerX# + normalizedX# * playerMovementSpeed#
+		newCharZ# = currentPlayerZ# + normalizedZ# * playerMovementSpeed#
+		POSITION OBJECT playerId#, newCharX#, playerPositionY#, newCharZ#
 	ENDIF
-	
-	Rem calculate distance and direction
-	deltaX# = targetX# - currentPlayerX#
-	deltaZ# = targetZ# - currentPlayerZ#
-	distanceToTarget# = SQRT((deltaX# * deltaX#) + (deltaZ# * deltaZ#))
-	POINT OBJECT playerId#, targetX#, OBJECT POSITION Y(playerId#), targetZ#
-	
-	Rem check if reached floor target
-	IF distanceToTarget# <= 1.0 AND isChasingEnemy = 0
-		Transition_To_Idle()
-		EXITFUNCTION
-	ENDIF
-	
-	Rem check if reached enemy (transition to attack)
-	IF distanceToTarget# <= attackRadius# AND isChasingEnemy = 1
-		Transition_To_Attacking()
-		EXITFUNCTION
-	ENDIF
-	
-	Rem continue moving
-	normalizedX# = deltaX# / distanceToTarget#
-	normalizedZ# = deltaZ# / distanceToTarget#
-	newCharX# = currentPlayerX# + normalizedX# * playerMovementSpeed#
-	newCharZ# = currentPlayerZ# + normalizedZ# * playerMovementSpeed#
-	POSITION OBJECT playerId#, newCharX#, playerPositionY#, newCharZ#
 ENDFUNCTION
 
 FUNCTION Update_Attacking_State()
@@ -209,8 +225,11 @@ FUNCTION Click_Floor()
 			Rem if in range and cooldown passed, transition to attack
 			IF distanceToEnemy# <= attackRadius# AND (TIMER() - lastAttackTime >= attackCooldown# OR lastAttackTime = 0)
 				Transition_To_Attacking()
-			ELSE
-				Rem not in range or cooldown active, transition to moving (chase)
+			ENDIF
+			
+			Rem if not in range or cooldown active, transition to moving (chase)
+			IF distanceToEnemy# > attackRadius# OR (TIMER() - lastAttackTime < attackCooldown# AND lastAttackTime <> 0)
+				Rem chase enemy - target will be updated each frame to enemy's current position
 				Transition_To_Moving(enemyX#, enemyZ#, 1)
 			ENDIF
 		ELSE
@@ -245,11 +264,16 @@ ENDFUNCTION
 
 FUNCTION Move_Player()
 	Rem main state machine update - route to appropriate state handler
+	Rem use separate IF statements (DarkBASIC Pro doesn't support IF ELSE ELSE)
 	IF playerState = STATE_IDLE
 		Update_Idle_State()
-	ELSE IF playerState = STATE_MOVING
+	ENDIF
+	
+	IF playerState = STATE_MOVING
 		Update_Moving_State()
-	ELSE IF playerState = STATE_ATTACKING
+	ENDIF
+	
+	IF playerState = STATE_ATTACKING
 		Update_Attacking_State()
 	ENDIF
 ENDFUNCTION
