@@ -4,7 +4,7 @@ GLOBAL playerPositionX#, playerPositionY#, playerPositionZ#             // playe
 GLOBAL isPlayerMoving, playerMovementSpeed#                             // movement variables
 GLOBAL isChasingEnemy, isAttackingEnemy, attackRadius#                  // attack variables
 GLOBAL isWalkAnim, isAttackAnim, isHitSfx                               // animation flags
-GLOBAL triggerAttackAnim
+GLOBAL triggerAttackAnim, lastAttackTime, attackCooldown#, lastMouseClickState
 
 FUNCTION Init_Player_Interaction()
 	Rem player position variables
@@ -23,28 +23,47 @@ FUNCTION Init_Player_Interaction()
 	isAttackAnim            = 0
 	attackRadius#           = 1.5
 	triggerAttackAnim       = 0
+	lastAttackTime          = 0
+	attackCooldown#         = 600
+	lastMouseClickState     = 0
 	
 ENDFUNCTION
 
 FUNCTION Click_Floor()
-	Rem detect left click 1
-	IF MOUSECLICK() = 1
-		Rem if clicking on enemy object then let Attack_Object handle logic
+	Rem detect left click 1 (only on click down, not held)
+	IF MOUSECLICK() = 1 AND lastMouseClickState = 0
+		Rem if clicking on enemy object
 		interactableObj# = PICK OBJECT(MOUSEX(), MOUSEY(), 3, 5)
 		IF interactableObj# = enemyId#
-			isChasingEnemy = 1
-			isAttackingEnemy = 0
-			STOP OBJECT playerId# // new
-			LOOP OBJECT 1, 30, 50
-			SET OBJECT SPEED playerId#, 31.5
-			Rem play walk animation
-// 	 		IF isWalkAnim = 0
-// 	 			isWalkAnim = 1
-// 	 			LOOP OBJECT playerId#, 30, 50
-// 	 			SET OBJECT SPEED playerId#, 31.5
-// 	 			LOOP SOUND 1
-// 	 		ENDIF
-			isPlayerMoving = 1
+			Rem check if player is already in attack range
+			currentPlayerX# = OBJECT POSITION X(playerId#)
+			currentPlayerZ# = OBJECT POSITION Z(playerId#)
+			enemyX# = OBJECT POSITION X(enemyId#)
+			enemyZ# = OBJECT POSITION Z(enemyId#)
+			deltaX# = enemyX# - currentPlayerX#
+			deltaZ# = enemyZ# - currentPlayerZ#
+			distanceToEnemy# = SQRT((deltaX# * deltaX#) + (deltaZ# * deltaZ#))
+			
+			Rem if in range and cooldown passed, trigger attack directly
+			IF distanceToEnemy# <= attackRadius# AND (TIMER() - lastAttackTime >= attackCooldown# OR lastAttackTime = 0)
+				Rem stop any movement and enter attack state
+				isPlayerMoving    = 0
+				isChasingEnemy    = 0
+				isAttackingEnemy  = 1
+				Rem stop walk animation and sound
+				isWalkAnim        = 0
+				STOP OBJECT playerId#
+				STOP SOUND 1
+				Rem Click_To_Attack() will be called from Move_Player() to handle dice roll and trigger animation
+			ELSE
+				Rem not in range or cooldown active, chase enemy
+				isChasingEnemy = 1
+				isAttackingEnemy = 0
+				STOP OBJECT playerId#
+				LOOP OBJECT playerId#, 30, 50
+				SET OBJECT SPEED playerId#, 31.5
+				isPlayerMoving = 1
+			ENDIF
 		ELSE
 			Rem get nearest ray vector
 			PICK SCREEN MOUSEX(), MOUSEY(), 1
@@ -86,9 +105,19 @@ FUNCTION Click_Floor()
 		POINT OBJECT 1, playerPositionX#, playerPositionY#, playerPositionZ#
 
 	ENDIF
+	
+	Rem track mouse click state for edge detection
+	lastMouseClickState = MOUSECLICK()
 ENDFUNCTION
 
 FUNCTION Move_Player()
+	Rem handle attack input when in attack state (but not during animation)
+	IF isAttackingEnemy = 1 AND isPlayerMoving = 0 AND isAttackAnim = 0
+		Click_To_Attack()
+		EXITFUNCTION
+	ENDIF
+	
+	Rem if currently attacking, don't process movement
 	IF isAttackingEnemy = 1
 		EXITFUNCTION
 	ENDIF
@@ -125,14 +154,14 @@ FUNCTION Move_Player()
 		Rem stop moving if within attack radius
 		IF distanceToTarget# <= attackRadius# AND isChasingEnemy = 1
 			isPlayerMoving    = 0
-			//isWalkAnim       = 0 //new
+			isWalkAnim        = 0
 			isChasingEnemy    = 0
 			isAttackingEnemy  = 1
-			triggerAttackAnim = 1 //new
+			triggerAttackAnim = 1
 			lastAttackTime    = TIMER()
-// 			LOOP OBJECT playerId#, 0, 24
-// 			SET OBJECT SPEED 1, 10
-// 			STOP SOUND 1
+			Rem stop walk animation and sound
+			STOP OBJECT playerId#
+			STOP SOUND 1
 			EXITFUNCTION
 		ENDIF
 		
@@ -152,26 +181,6 @@ FUNCTION Move_Player()
 			LOOP SOUND 1
 		ENDIF
 	ENDIF
-
-	IF isAttackingEnemy = 1 AND isPlayerMoving = 0
-		Click_To_Attack()
-	ENDIF
-	
-	Rem if attack flags get stuck	
-// 	IF triggerAttackAnim = 1 AND isAttackAnim = 1 AND isAttackingEnemy = 1
-// 		Rem TODO: add timer before reset
-// 		//currentTime = TIMER()
-// 		IF TIMER() - lastAttackTime < attackCooldown#
-// 			EXITFUNCTION
-// 			//lastAttackTime = currentTime
-// 			
-// 			//triggerAttackAnim = 0 //new
-// 			//isAttackAnim      = 0 //new
-// 			//isAttackingEnemy  = 0 //new
-// 			
-// 			
-// 		ENDIF
-// 	ENDIF
 ENDFUNCTION
 
 FUNCTION Attack_Object()
@@ -188,33 +197,35 @@ FUNCTION Attack_Object()
 ENDFUNCTION
 
 FUNCTION Attack_Animation()
-	
-	Rem play hit sfx while attacking enemy
+	Rem play attack animation and handle completion
 	IF triggerAttackAnim = 1
-		//isHitSfx = 0 //new
-		
- 		IF isAttackAnim = 0
- 			STOP OBJECT playerId# //new
- 			isAttackAnim = 1
- 			isHitSfx     = 0
- 			isWalkAnim   = 0
- 			//STOP SOUND   = 1
+		Rem start attack animation if not already playing
+		IF isAttackAnim = 0
+			STOP OBJECT playerId#
+			isAttackAnim = 1
+			isHitSfx     = 0
+			isWalkAnim   = 0
+			STOP SOUND 1
 			PLAY OBJECT playerId#, 62, 75
 			SET OBJECT SPEED playerId#, 45
- 		ENDIF
+		ENDIF
 		
+		Rem play hit sound at impact frame
 		IF OBJECT FRAME(playerId#) >= 65 AND OBJECT FRAME(playerId#) < 65.5 AND isHitSfx = 0
 			PLAY SOUND 3
-			triggerAttackAnim = 0 //new
-			isAttackAnim      = 0 //new
-			isAttackingEnemy  = 0 //new
 			isHitSfx = 1
-			lastAttackTime    = TIMER()
-			STOP OBJECT playerId# //new
+		ENDIF
+		
+		Rem check if attack animation completed (frame 75 is end of attack anim)
+		IF OBJECT FRAME(playerId#) >= 75 OR OBJECT PLAYING(playerId#) = 0
+			Rem reset all attack flags and return to idle
+			triggerAttackAnim = 0
+			isAttackAnim      = 0
+			isAttackingEnemy  = 0
+			isHitSfx          = 0
+			STOP OBJECT playerId#
 			LOOP OBJECT playerId#, 0, 24
 			SET OBJECT SPEED playerId#, 10
 		ENDIF
- 		
 	ENDIF
-
 ENDFUNCTION

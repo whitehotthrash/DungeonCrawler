@@ -42,33 +42,31 @@ FUNCTION Take_Damage(entityId#)
 ENDFUNCTION
 
 FUNCTION Click_To_Attack()
-
-		//currentTime = TIMER()
-		triggerAttackAnim = 1
-
-		IF MOUSECLICK() = 1 AND lastMouseClick = 0
-		
-			//IF currentTime - lastAttackTime >= attackCooldown#
-				
-				//lastAttackTime = currentTime
-				
-				rollOne# = RND(5) + 1
-				rollTwo# = RND(5) + 1
-				rollResult# = rollOne# + rollTwo#
-				
-				hasAttacked = 1
+	Rem only trigger attack on click down (edge detection) and if cooldown passed
+	currentTime = TIMER()
 	
-				IF rollResult# > 6
-					hasHit = 1
-					Take_Damage(enemyId#)
-				ELSE
-					hasHit = 0
-				ENDIF
-
-			//ENDIF
-
-		ENDIF
+	IF MOUSECLICK() = 1 AND lastMouseClick = 0
+		Rem check cooldown before allowing new attack
+		IF currentTime - lastAttackTime >= attackCooldown# OR lastAttackTime = 0
+			Rem trigger attack animation
+			triggerAttackAnim = 1
+			lastAttackTime = currentTime
 			
-		lastMouseClick = MOUSECLICK()
-	
+			Rem roll dice for hit calculation
+			rollOne# = RND(5) + 1
+			rollTwo# = RND(5) + 1
+			rollResult# = rollOne# + rollTwo#
+			
+			hasAttacked = 1
+
+			IF rollResult# > 6
+				hasHit = 1
+				Take_Damage(enemyId#)
+			ELSE
+				hasHit = 0
+			ENDIF
+		ENDIF
+	ENDIF
+		
+	lastMouseClick = MOUSECLICK()
 ENDFUNCTION
