@@ -24,5 +24,18 @@ github.com/users/whitehotthrash/projects/1/views/1
 - Plant Life
 - DarkMATTER
 
+### Prerequisites to Running
+Windows versions XP, Vista, 7, 8, 8.1, 10, 11  
+- only tested in XP and 10 currently
 
+### To Run
+Download entire codebase and run the Legacy Of Fire And Shadow executable
 
+### Controls
+`Left arrow key` Rotates camera to the left  
+`Right arrow key` Rotates camera to the right  
+`Scroll up and down` Zooms in and out of the player character  
+`Left mouse click`   
+- On the floor, make player move to clicked spot  
+- On enemy, make player chase enemy  
+- On enemy within attack radius, attack once  
