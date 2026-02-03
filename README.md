@@ -1,3 +1,5 @@
+<img width="1024" height="1536" alt="Legacy Of Fire And Shadow" src="https://github.com/user-attachments/assets/b898145d-8cdd-4ed8-9266-a9be009a3028" />
+
 # Legacy of Fire and Shadow (working title)
 #### Version: early development
 
@@ -21,5 +23,6 @@ github.com/users/whitehotthrash/projects/1/views/1
 - TreeMagik
 - Plant Life
 - DarkMATTER
+
 
 
